@@ -14,7 +14,7 @@ This repository contains a C2C freelance home cleaners matching platform with a 
 
 ```bash
 git clone https://github.com/raspbury/314GrpProject.git
-cd CleaningPlatformApp
+cd 314GrpProject
 ```
 
 ### 2. Database Setup
@@ -74,7 +74,7 @@ cd CleaningPlatformApp
     ```bash
     cd ../app
     ```
-    *(Or `cd CleaningPlatformApp/app` if starting from your home directory)*
+    *(Or `cd 314GrpProject/app` if starting from your home directory)*
 3.  Install dependencies:
     ```bash
     npm install
@@ -118,6 +118,4 @@ Then log in via the web interface using:
 
 -   `app/`: React frontend application (using Vite)
 -   `server/`: Express.js backend API
-    -   `.env.example`: Example environment configuration file
-    -   `.env`: Local environment configuration (ignored by Git)
--   `SQL_Scripts/`: Contains database schema setup scripts (`create_tables.sql`)
+-   `SQL_Scripts/`: Contains database schema setup scripts
