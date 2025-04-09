@@ -1,0 +1,19 @@
+{
+  "name": "csit314-sim2025q2-machv",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "server": "cd server && npm run start",
+    "client": "cd app && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "install:all": "npm install && cd server && npm install && cd ../app && npm install"
+  },
+  "keywords": [],
+  "author": "MachV",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
