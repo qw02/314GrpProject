@@ -1,8 +1,8 @@
 /**
  * Represents user profile data transferred between layers.
  */
-export class UserProfileModel {
-   /** @type {string} */
+export class UserProfile {
+  /** @type {string} */
   username;
   /** @type {string} */
   firstName;

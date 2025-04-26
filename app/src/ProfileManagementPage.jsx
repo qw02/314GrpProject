@@ -1,9 +1,7 @@
-// client/src/ProfileManagementPage.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-// --- Helper Function for API Calls (Assumes Vite Proxy setup) ---
-// (Keep the same proxy-compatible version)
+// --- Helper Function for API Calls ---
 async function apiCall(url, method = 'GET', body = null) {
   const apiUrl = url.startsWith('/api') ? url : `/api${url.startsWith('/') ? '' : '/'}${url}`;
   const options = { method, headers: {} };

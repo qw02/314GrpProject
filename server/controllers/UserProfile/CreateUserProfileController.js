@@ -1,16 +1,16 @@
-import { CreateUserProfileEntity } from '../../entities/UserProfile/CreateUserProfileEntity.js';
-import { UserProfileModel } from '../../models/UserProfileModel.js';
+import { UserProfileEntity } from '../../entities/UserProfileEntity.js';
+import { UserProfile } from '../../models/UserProfile.js';
 import pool from '../../db.js';
 
 /**
  * Controller for creating user profiles.
  */
 export class CreateUserProfileController {
-  /** @type {CreateUserProfileEntity} */
-  createUserProfileEntity;
+  /** @type {UserProfileEntity} */
+  userProfileEntity;
 
   constructor() {
-    this.createUserProfileEntity = new CreateUserProfileEntity(pool);
+    this.userProfileEntity = new UserProfileEntity(pool);
   }
 
   /**
@@ -21,24 +21,17 @@ export class CreateUserProfileController {
   createProfile = async (req, res) => {
     const { username, firstName, lastName, email, phoneNumber } = req.body;
 
-    // Basic email format check (very simple)
-    if (email && !/\S+@\S+\.\S+/.test(email)) {
-      return res.status(400).json({ message: 'Invalid email format provided.' });
-    }
-
-
-    const profileModel = new UserProfileModel(username, firstName, lastName, email, phoneNumber);
+    const profileModel = new UserProfile(username, firstName, lastName, email, phoneNumber);
 
     try {
-      const success = await this.createUserProfileEntity.createProfile(profileModel);
+      const success = await this.userProfileEntity.createProfile(profileModel);
       if (success) {
         res.status(200).json({ message: `User profile for '${username}' created successfully.` });
       } else {
-        res.status(409).json({ message: `User profile for '${username}' already exists, or no user account yet.` });
+        res.status(500);
       }
     } catch (error) {
-      console.error('Create user profile controller error:', error);
-      res.status(500).json({ message: error.message || 'Internal server error during profile creation.' });
+      res.status(500);
     }
   }
 }

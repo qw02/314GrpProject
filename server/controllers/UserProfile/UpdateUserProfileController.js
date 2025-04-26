@@ -1,16 +1,16 @@
-import { UpdateUserProfileEntity } from '../../entities/UserProfile/UpdateUserProfileEntity.js';
-import { UserProfileModel } from '../../models/UserProfileModel.js';
+import { UserProfileEntity } from '../../entities/UserProfileEntity.js';
+import { UserProfile } from '../../models/UserProfile.js';
 import pool from '../../db.js';
 
 /**
  * Controller for updating user profile details.
  */
 export class UpdateUserProfileController {
-  /** @type {UpdateUserProfileEntity} */
-  updateUserProfileEntity;
+  /** @type {UserProfileEntity} */
+  userProfileEntity;
 
   constructor() {
-    this.updateUserProfileEntity = new UpdateUserProfileEntity(pool);
+    this.userProfileEntity = new UserProfileEntity(pool);
   }
 
   /**
@@ -23,16 +23,8 @@ export class UpdateUserProfileController {
     const { username } = req.params;
     const { firstName, lastName, email, phoneNumber } = req.body;
 
-    if (!username) {
-      return res.status(400).json({ message: 'Username is required in the URL path.' });
-    }
-    // Basic email format check if email is provided
-    if (email && !/\S+@\S+\.\S+/.test(email)) {
-      return res.status(400).json({ message: 'Invalid email format provided.' });
-    }
-
     // Create a model with only the fields provided in the request body
-    const profileModel = new UserProfileModel(
+    const profileModel = new UserProfile(
       username,
       req.body.hasOwnProperty('firstName') ? firstName : undefined,
       req.body.hasOwnProperty('lastName') ? lastName : undefined,
@@ -41,15 +33,14 @@ export class UpdateUserProfileController {
     );
 
     try {
-      const success = await this.updateUserProfileEntity.updateProfile(profileModel);
+      const success = await this.userProfileEntity.updateProfile(profileModel);
       if (success) {
         res.status(200).json({ message: `Profile for user '${username}' updated successfully.` });
       } else {
-        res.status(404).json({ message: `User profile for '${username}'.` });
+        res.status(500);
       }
     } catch (error) {
-      console.error('Update user profile controller error:', error);
-      res.status(500).json({ message: error.message || 'Internal server error during profile update.' });
+      res.status(500);
     }
   }
 }

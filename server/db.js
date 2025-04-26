@@ -17,16 +17,4 @@ const dbConfig = {
 // Create the connection pool
 const pool = mysql.createPool(dbConfig);
 
-// Optional: Test the connection
-pool.getConnection()
-  .then(connection => {
-    console.log('Successfully connected to the database. ✨');
-    connection.release();
-  })
-  .catch(err => {
-    console.error('Error connecting to the database:', err);
-    // Depending on the setup, you might want to exit the process
-    // process.exit(1);
-  });
-
 export default pool;

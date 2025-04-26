@@ -1,15 +1,15 @@
-import { ReadUserAccountEntity } from '../../entities/UserAccount/ReadUserAccountEntity.js';
+import { UserAccountEntity } from "../../entities/UserAccountEntity";
 import pool from '../../db.js';
 
 /**
  * Controller for reading user account details.
  */
 export class ReadUserAccountController {
-  /** @type {ReadUserAccountEntity} */
-  readUserAccountEntity;
+  /** @type {UserAccountEntity} */
+  createUserAccountEntity;
 
   constructor() {
-    this.readUserAccountEntity = new ReadUserAccountEntity(pool);
+    this.userAccountEntity = new UserAccountEntity(pool);
   }
 
   /**
@@ -20,22 +20,17 @@ export class ReadUserAccountController {
   getAccount = async (req, res) => {
     const { username } = req.params;
 
-    if (!username) {
-      return res.status(400).json({ message: 'Username is required in the URL path.' });
-    }
-
     try {
-      const userAccount = await this.readUserAccountEntity.getUserAccount(username);
+      const userAccount = await this.userAccountEntity.getUserAccount(username);
       if (userAccount) {
         // Exclude password before sending response
         const { password, ...accountData } = userAccount;
         res.status(200).json(accountData);
       } else {
-        res.status(404).json({ message: `User account '${username}' not found.` });
+        res.status(500);
       }
     } catch (error) {
-      console.error('Read user account controller error:', error);
-      res.status(500).json({ message: error.message || 'Internal server error while fetching account.' });
+      res.status(500);
     }
   }
 }

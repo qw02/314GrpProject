@@ -1,15 +1,15 @@
-import { ReadUserProfileEntity } from '../../entities/UserProfile/ReadUserProfileEntity.js';
+import { UserProfileEntity } from '../../entities/UserProfileEntity.js';
 import pool from '../../db.js';
 
 /**
  * Controller for reading user profile details.
  */
 export class ReadUserProfileController {
-  /** @type {ReadUserProfileEntity} */
-  readUserProfileEntity;
+  /** @type {UserProfileEntity} */
+  userProfileEntity;
 
   constructor() {
-    this.readUserProfileEntity = new ReadUserProfileEntity(pool);
+    this.userProfileEntity = new UserProfileEntity(pool);
   }
 
   /**
@@ -20,20 +20,15 @@ export class ReadUserProfileController {
   getProfile = async (req, res) => {
     const { username } = req.params;
 
-    if (!username ) {
-      return res.status(400).json({ message: 'Username is required in the URL path.' });
-    }
-
     try {
-      const userProfile = await this.readUserProfileEntity.getUserProfile(username);
+      const userProfile = await this.userProfileEntity.getUserProfile(username);
       if (userProfile) {
         res.status(200).json(userProfile);
       } else {
-        res.status(404).json({ message: `User profile for '${username}' not found.` });
+        res.status(500);
       }
     } catch (error) {
-      console.error('Read user profile controller error:', error);
-      res.status(500).json({ message: error.message || 'Internal server error while fetching profile.' });
+      res.status(500);
     }
   }
 }

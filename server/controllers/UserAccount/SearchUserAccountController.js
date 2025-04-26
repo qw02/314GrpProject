@@ -1,15 +1,15 @@
-import { SearchUserAccountEntity } from '../../entities/UserAccount/SearchUserAccountEntity.js';
+import { UserAccountEntity } from "../../entities/UserAccountEntity";
 import pool from '../../db.js';
 
 /**
  * Controller for searching user accounts, returning only usernames.
  */
 export class SearchUserAccountController {
-  /** @type {SearchUserAccountEntity} */
-  searchUserAccountEntity;
+  /** @type {UserAccountEntity} */
+  userAccountEntity;
 
   constructor() {
-    this.searchUserAccountEntity = new SearchUserAccountEntity(pool);
+    this.userAccountEntity = new UserAccountEntity(pool);
   }
 
   /**
@@ -21,19 +21,11 @@ export class SearchUserAccountController {
     const searchTerm = req.query.q || '';
     const roleFilter = req.query.role;
 
-    if (roleFilter) {
-      const validRoles = ['UserAdmin', 'Cleaner', 'HomeOwner', 'PlatformManager'];
-      if (!validRoles.includes(roleFilter)) {
-        return res.status(400).json({ message: 'Invalid role specified for search filter.' });
-      }
-    }
-
     try {
-      const usernames = await this.searchUserAccountEntity.searchUsers(searchTerm, roleFilter);
+      const usernames = await this.userAccountEntity.searchUsers(searchTerm, roleFilter);
       res.status(200).json(usernames);
     } catch (error) {
-      console.error('Search user accounts controller error:', error);
-      res.status(500).json({ message: error.message || 'Internal server error during account search.' });
+      res.status(500);
     }
   }
 }

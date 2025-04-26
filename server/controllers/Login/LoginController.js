@@ -1,5 +1,5 @@
-import { LoginEntity } from '../../entities/Login/LoginEntity.js';
-import { UserModel } from '../../models/UserModel.js';
+import { LoginEntity } from '../../entities/LoginEntity.js';
+import { User } from '../../models/User.js';
 import pool from '../../db.js';
 
 /**
@@ -21,17 +21,7 @@ export class LoginController {
   login = async (req, res) => {
     const { username, password, role } = req.body;
 
-    // Basic validation
-    if (!username || !password || !role) {
-      return res.status(400).json({ message: 'Username, password, and role are required.' });
-    }
-    // Validate role value
-    const validRoles = ['UserAdmin', 'Cleaner', 'HomeOwner', 'PlatformManager'];
-    if (!validRoles.includes(role)) {
-      return res.status(400).json({ message: 'Invalid role specified.' });
-    }
-
-    const userModel = new UserModel(username, password, role);
+    const userModel = new User(username, password, role);
 
     try {
       const validatedUser = await this.loginEntity.verifyCredentials(userModel);
@@ -39,11 +29,10 @@ export class LoginController {
       if (validatedUser) {
         res.status(200).json({ username: validatedUser.username, role: validatedUser.role });
       } else {
-        res.status(401).json({ message: 'Invalid username, password, or role, or account inactive.' });
+        res.status(500);
       }
     } catch (error) {
-      console.error('Login controller error:', error);
-      res.status(500).json({ message: error.message || 'An internal server error occurred during login.' });
+      res.status(500);
     }
   }
 }

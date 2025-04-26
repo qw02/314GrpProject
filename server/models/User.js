@@ -1,7 +1,7 @@
 /**
  * Represents the core user account data transferred between layers.
  */
-export class UserModel {
+export class User {
   /** @type {string} */
   username;
   /** @type {string | undefined} */
@@ -17,7 +17,7 @@ export class UserModel {
    * @param {'UserAdmin' | 'Cleaner' | 'HomeOwner' | 'PlatformManager'} role
    * @param {boolean | undefined} isActive
    */
-  constructor(username, password, role= null, isActive = undefined) {
+  constructor(username, password, role = null, isActive = undefined) {
     this.username = username;
     this.password = password;
     this.role = role;

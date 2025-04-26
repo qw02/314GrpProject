@@ -1,16 +1,16 @@
-import { DeleteUserProfileEntity } from '../../entities/UserProfile/DeleteUserProfileEntity.js';
+import { UserProfileEntity } from '../../entities/UserProfileEntity.js';
 import pool from '../../db.js';
 
 /**
  * Controller for handling the deletion of user profiles.
  */
 export class DeleteUserProfileController {
-  /** @type {DeleteUserProfileEntity} */ // Updated type
-  deleteUserProfileEntity;
+  /** @type {UserProfileEntity} */ // Updated type
+  userProfileEntity;
 
   constructor() {
     // Instantiate the correct entity
-    this.deleteUserProfileEntity = new DeleteUserProfileEntity(pool);
+    this.userProfileEntity = new UserProfileEntity(pool);
   }
 
   /**
@@ -26,15 +26,14 @@ export class DeleteUserProfileController {
     }
 
     try {
-      const success = await this.deleteUserProfileEntity.deleteProfile(username);
+      const success = await this.userProfileEntity.deleteProfile(username);
       if (success) {
         res.status(200).json({ message: `User profile for '${username}' deleted successfully.` });
       } else {
-        res.status(404).json({ message: `User profile for '${username}' not found.` });
+        res.status(500);
       }
     } catch (error) {
-      console.error('Delete user profile controller error:', error);
-      res.status(500).json({ message: error.message || 'Internal server error during profile deletion.' });
+      res.status(500);
     }
   }
 }
