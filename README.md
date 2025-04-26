@@ -14,7 +14,7 @@ This repository contains a C2C freelance home cleaners matching platform with a 
 
 ```bash
 git clone https://github.com/raspbury/314GrpProject.git
-cd CleaningPlatformApp
+cd 314GrpProject
 ```
 
 ### 2. Database Setup
@@ -52,12 +52,12 @@ cd CleaningPlatformApp
     *   Update the values to match your local environment:
         ```dotenv
         # .env file contents
-        DB_HOST=localhost          # Your MySQL host (usually localhost)
-        DB_USER=YOUR_MYSQL_USER    # Replace with your MySQL username
-        DB_PASSWORD=YOUR_MYSQL_PWD # Replace with your MySQL password
-        DB_NAME=cleaner_app_db     # The database name created in Step 2
-        DB_PORT=3306               # Your MySQL port (usually 3306)
-        PORT=5000                  # The port the backend server will run on
+        DB_HOST=localhost            # Your MySQL host (usually localhost)
+        DB_USER=YOUR_MYSQL_USER      # Replace with your MySQL username
+        DB_PASSWORD=YOUR_MYSQL_PWD   # Replace with your MySQL password
+        DB_NAME=cleaning_platform_db # The database name created in Step 2
+        DB_PORT=3306                 # Your MySQL port (usually 3306)
+        PORT=5000                    # The port the backend server will run on
         ```
     *   **Important:** The `.env` file contains sensitive information and should *not* be committed to Git. Ensure `.env` is listed in your `server/.gitignore` file.
 
@@ -72,9 +72,9 @@ cd CleaningPlatformApp
 1.  Open a **new** terminal window.
 2.  Navigate to the client directory from the project root:
     ```bash
-    cd ../client
+    cd ../app
     ```
-    *(Or `cd CleaningPlatformApp/client` if starting from your home directory)*
+    *(Or `cd 314GrpProject/app` if starting from your home directory)*
 3.  Install dependencies:
     ```bash
     npm install
@@ -96,11 +96,10 @@ To log in as an administrator, you may need to create an initial `UserAdmin` acc
 
 ```sql
 -- Connect to your MySQL server and use the correct database:
--- USE cleaner_app_db;
+-- USE cleaning_platform_db;
 
 INSERT INTO UserAccount (username, password, role, isActive)
 VALUES ('admin', 'password', 'UserAdmin', TRUE);
--- Note: 'password' here is plain text for demo purposes. Use a simple password for local testing.
 ```
 
 Then log in via the web interface using:
@@ -112,13 +111,11 @@ Then log in via the web interface using:
 
 *   **Port Conflicts:** Ensure the ports specified in `server/.env` (`PORT`) and used by Vite (`npm run dev`) are free. Stop conflicting applications or change the port numbers.
 *   **Database Connection Errors:** Double-check all `DB_*` values in `server/.env`. Make sure your MySQL server is running and accessible.
-*   **API Call Failures (404/500 errors in browser console):** Verify the backend server is running. Check that the `proxy` target in `client/vite.config.js` matches the backend `PORT` (e.g., `http://localhost:5000`).
-*   **Dependency Issues:** If `npm install` fails or you encounter strange errors, try deleting the `node_modules` folder and `package-lock.json` file in the problematic directory (`server` or `client`) and run `npm install` again.
+*   **API Call Failures (404/500 errors in browser console):** Verify the backend server is running. Check that the `proxy` target in `app/vite.config.js` matches the backend `PORT` (e.g., `http://localhost:5000`).
+*   **Dependency Issues:** If `npm install` fails or you encounter strange errors, try deleting the `node_modules` folder and `package-lock.json` file in the problematic directory (`server` or `app`) and run `npm install` again.
 
 ## Project Structure
 
--   `client/`: React frontend application (using Vite)
+-   `app/`: React frontend application (using Vite)
 -   `server/`: Express.js backend API
-    -   `.env.example`: Example environment configuration file
-    -   `.env`: Local environment configuration (ignored by Git)
--   `SQL_Scripts/`: Contains database schema setup scripts (`create_tables.sql`)
+-   `SQL_Scripts/`: Contains database schema setup scripts
