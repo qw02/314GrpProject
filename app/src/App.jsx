@@ -1,44 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import LoginPage from './LoginPage'; // Assumes LoginPage.js is in ./src
-import AdminDashboard from './AdminDashboard'; // Assumes AdminDashboard.js is in ./src
-import AccountManagementPage from './AccountManagementPage'; // Assumes AccountManagementPage.js is in ./src
-import ProfileManagementPage from './ProfileManagementPage'; // Assumes ProfileManagementPage.js is in ./src
-
-// ProtectedAdminRoute component remains the same...
-function ProtectedAdminRoute() {
-  // ... (implementation from previous step)
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const user = localStorage.getItem('loggedInUser');
-    if (user) {
-      try {
-        const userData = JSON.parse(user);
-        if (userData && userData.role === 'UserAdmin') {
-          setIsAdmin(true);
-        }
-      } catch (e) {
-        console.error("Error parsing user data from localStorage", e);
-        localStorage.removeItem('loggedInUser');
-      }
-    }
-    setIsLoading(false);
-  }, []);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  return isAdmin ? <Outlet /> : <Navigate to="/login" replace />;
-}
-
+import LoginPage from './LoginPage';
+import AdminDashboard from './AdminDashboard';
+import AccountManagementPage from './AccountManagementPage';
+import ProfileManagementPage from './ProfileManagementPage';
+import CleanerDashboard from './CleanerDashboard.jsx';
+import ServiceManagementPage from './ServiceManagementPage.jsx';
+import ProtectedAdminRoute from './components/ProtectedAdminRoute.jsx';
+import ProtectedCleanerRoute from './components/ProtectedCleanerRoute.jsx';
 
 function App() {
-  // ... (state and handlers remain the same as previous step)
   const [loggedInUser, setLoggedInUser] = useState(null);
 
+  // Load user data from localStorage on initial mount
   useEffect(() => {
     const storedUser = localStorage.getItem('loggedInUser');
     if (storedUser) {
@@ -52,46 +26,80 @@ function App() {
   }, []);
 
   const handleLoginSuccess = (userData) => {
-    localStorage.setItem('loggedInUser', JSON.stringify(userData));
-    setLoggedInUser(userData);
+    if (userData && userData.username && userData.role) {
+      localStorage.setItem('loggedInUser', JSON.stringify(userData));
+      setLoggedInUser(userData);
+      console.log(`User ${userData.username} (${userData.role}) logged in.`);
+    } else {
+      console.error("Invalid user data received on login success:", userData);
+    }
   };
 
   const handleLogout = () => {
+    const user = loggedInUser;
     localStorage.removeItem('loggedInUser');
     setLoggedInUser(null);
-    console.log("User logged out from App level.");
+  };
+
+  const getRedirectPath = (user) => {
+    if (!user) return "/login";
+    switch (user.role) {
+      case 'UserAdmin':
+        return "/admin/dashboard";
+      case 'Cleaner':
+        return "/cleaner/dashboard";
+      case 'HomeOwner':
+        return "/home/dashboard";
+      case 'PlatformManager':
+        return "/platform/dashboard";
+      default:
+        console.warn(`No specific dashboard route defined for role: ${user.role}. Redirecting to root.`);
+        return "/";
+    }
   };
 
   return (
     <Router>
       <div style={{ padding: '20px' }}>
-        <h1>Cleaner Matching Platform - UserAdmin</h1>
+        <h1>Cleaner Matching Platform {loggedInUser ? `(${loggedInUser.role} View)` : ''}</h1>
+
         <Routes>
-          {/* Login Page */}
+          {/* --- Public Routes --- */}
           <Route
             path="/login"
-            element={loggedInUser ? <Navigate to={loggedInUser.role === 'UserAdmin' ? "/admin/dashboard" : "/"} replace /> : <LoginPage onLoginSuccess={handleLoginSuccess} />}
+            // If already logged in, redirect away from login page
+            element={loggedInUser ? <Navigate to={getRedirectPath(loggedInUser)} replace /> : <LoginPage onLoginSuccess={handleLoginSuccess} />}
           />
 
-          {/* Admin Protected Routes */}
+          {/* --- Admin Protected Routes --- */}
           <Route element={<ProtectedAdminRoute />}>
             <Route path="/admin/dashboard" element={<AdminDashboard onLogout={handleLogout} />} />
             <Route path="/admin/accounts" element={<AccountManagementPage />} />
             <Route path="/admin/profiles" element={<ProfileManagementPage />} />
           </Route>
 
-          {/* Redirect root */}
+          {/* --- Cleaner Protected Routes --- */}
+          <Route element={<ProtectedCleanerRoute />}>
+            <Route path="/cleaner/dashboard" element={<CleanerDashboard onLogout={handleLogout} />} />
+            <Route path="/cleaner/services" element={<ServiceManagementPage />} />
+            {/* Add other cleaner-only routes here (e.g., stats, history) */}
+          </Route>
+
+          {/* --- Root Path Handling --- */}
           <Route
             path="/"
             element={
               loggedInUser
-                ? (loggedInUser.role === 'UserAdmin' ? <Navigate to="/admin/dashboard" replace /> : <div>Welcome {loggedInUser.role}! (Non-admin area)</div>)
+                // Redirect logged-in users to their respective dashboards
+                ? <Navigate to={getRedirectPath(loggedInUser)} replace />
+                // If not logged in, redirect to login
                 : <Navigate to="/login" replace />
             }
           />
 
-          {/* Fallback */}
+          {/* --- Fallback Route --- */}
           <Route path="*" element={<Navigate to="/" replace />} />
+
         </Routes>
       </div>
     </Router>

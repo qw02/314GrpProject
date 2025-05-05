@@ -24,6 +24,13 @@ import { DeleteUserProfileController } from './controllers/UserProfile/DeleteUse
 import { SearchUserProfileController } from './controllers/UserProfile/SearchUserProfileController.js';
 
 
+// Service Controllers
+import { CreateServiceController } from './controllers/Service/CreateServiceController.js';
+import { ReadServiceController } from './controllers/Service/ReadServiceController.js';
+import { UpdateServiceController } from './controllers/Service/UpdateServiceController.js';
+import { DeleteServiceController } from './controllers/Service/DeleteServiceController.js';
+import { SearchServiceController } from './controllers/Service/SearchServiceController.js';
+
 // ================================================================================
 // --- Application Setup ---
 // ================================================================================
@@ -54,6 +61,13 @@ const updateUserProfileController = new UpdateUserProfileController();
 const deleteUserProfileController = new DeleteUserProfileController();
 const searchUserProfileController = new SearchUserProfileController();
 
+// Service Controllers
+const createServiceController = new CreateServiceController();
+const readServiceController = new ReadServiceController();
+const updateServiceController = new UpdateServiceController();
+const deleteServiceController = new DeleteServiceController();
+const searchServiceController = new SearchServiceController();
+
 // ================================================================================
 // --- Routes ---
 // ================================================================================
@@ -74,6 +88,13 @@ app.put('/api/useradmin/profile/:username/', updateUserProfileController.updateP
 app.delete('/api/useradmin/profile/:username/', deleteUserProfileController.deleteProfile);
 app.get('/api/useradmin/profiles/search', searchUserProfileController.searchProfiles);
 
+// Service Booking API
+app.post('/api/service', createServiceController.createService);
+app.get('/api/service/categories', createServiceController.getCategories);
+app.get('/api/service/search', searchServiceController.searchServices);
+app.get('/api/service/:id', readServiceController.getService);
+app.put('/api/service/:id', updateServiceController.updateService);
+app.delete('/api/service/:id', deleteServiceController.deleteService);
 
 // Basic root route
 app.get('/', (req, res) => {

@@ -31,4 +31,5 @@ function AdminDashboard({ onLogout }) {
     </div>
   );
 }
+
 export default AdminDashboard;

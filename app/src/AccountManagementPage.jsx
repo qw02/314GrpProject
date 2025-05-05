@@ -162,28 +162,6 @@ function AccountManagementPage() {
     }
   };
 
-  const handleReactivateAccount = async () => {
-    if (!selectedAccount) return;
-    if (!window.confirm(`Are you sure you want to reactivate account: ${selectedAccount.username}?`)) return;
-
-    setIsLoading(true);
-    clearMessages();
-    try {
-      // Assuming PUT /api/useradmin/account/:username/reactivate
-      const result = await apiCall(
-        `/api/useradmin/account/${selectedAccount.username}/reactivate`, // Use only username
-        'PUT'
-      );
-      showMessage(result.message || 'Account reactivated successfully!', 'success');
-      setSelectedAccount({ ...selectedAccount, isActive: true }); // Update local state
-    } catch (error) {
-      showMessage(error.message || 'Failed to reactivate account.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-
   // --- Render Logic ---
   return (
     <div>

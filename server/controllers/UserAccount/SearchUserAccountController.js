@@ -1,4 +1,4 @@
-import { UserAccountEntity } from "../../entities/UserAccountEntity";
+import { UserAccountEntity } from "../../entities/UserAccountEntity.js";
 import pool from '../../db.js';
 
 /**

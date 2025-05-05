@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function LoginPage({ onLoginSuccess }) {
-  // ... state variables ...
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('HomeOwner');
@@ -21,28 +20,38 @@ function LoginPage({ onLoginSuccess }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password, role }),
       });
+
       const data = await response.json();
 
       if (response.ok) {
         console.log('Login successful:', data);
         onLoginSuccess(data);
 
-        if (data.role === 'Admin') {
-          navigate('/admin/dashboard', { replace: true });
-        } else {
-          navigate('/', { replace: true });
+        // Determine redirect path based on the role confirmed by the backend
+        switch (data.role) {
+          case 'UserAdmin':
+            navigate('/admin/dashboard', { replace: true });
+            break;
+          case 'Cleaner':
+            navigate('/cleaner/dashboard', { replace: true });
+            break;
+          case 'HomeOwner':
+            navigate('/home/dashboard', { replace: true });
+            break;
+          case 'PlatformManager':
+            navigate('/platform/dashboard', { replace: true });
+            break;
+          default:
+            console.warn(`Login successful, but no specific dashboard route for role: ${data.role}. Redirecting to root.`);
+            navigate('/', { replace: true });
+            break;
         }
       } else {
-        setError(data.message || 'Login failed.');
+        setError(data.message || 'Login failed. Please check your credentials and selected role.');
       }
     } catch (err) {
       console.error('Login API call failed:', err);
-      // Check if the error message suggests a network issue vs. proxy issue
-      if (err instanceof TypeError && err.message.includes('fetch')) {
-        setError('Network error or backend server unreachable. (Check proxy/server status)');
-      } else {
-        setError('Failed to connect to the server.');
-      }
+      setError('An unexpected error occurred during login.');
     } finally {
       setIsLoading(false);
     }
@@ -54,11 +63,11 @@ function LoginPage({ onLoginSuccess }) {
       <form onSubmit={handleLogin}>
         <div>
           <label htmlFor="username">Username:</label>
-          <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+          <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} required/>
         </div>
         <div>
           <label htmlFor="password">Password:</label>
-          <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required/>
         </div>
         <div>
           <label htmlFor="role">Login as:</label>
@@ -77,4 +86,5 @@ function LoginPage({ onLoginSuccess }) {
     </div>
   );
 }
+
 export default LoginPage;
