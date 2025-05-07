@@ -1,5 +1,5 @@
-import { UserAccountEntity } from "../../entities/UserAccountEntity.js";
-import pool from '../../db.js';
+import { UserAccountEntity } from "../../../entities/UserAccountEntity.js";
+import pool from '../../../db.js';
 
 /**
  * Controller for searching user accounts, returning only usernames.

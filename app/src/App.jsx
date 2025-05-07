@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import LoginPage from './LoginPage';
-import AdminDashboard from './AdminDashboard';
-import AccountManagementPage from './AccountManagementPage';
-import ProfileManagementPage from './ProfileManagementPage';
-import CleanerDashboard from './CleanerDashboard.jsx';
-import ServiceManagementPage from './ServiceManagementPage.jsx';
+import AdminDashboard from './UserAdmin/AdminDashboard.jsx';
+import AccountManagementPage from './UserAdmin/AccountManagementPage.jsx';
+import ProfileManagementPage from './UserAdmin/ProfileManagementPage.jsx';
+import CleanerDashboard from './Cleaner/CleanerDashboard.jsx';
+import ServiceManagementPage from './Cleaner/ServiceManagementPage.jsx';
 import ProtectedAdminRoute from './components/ProtectedAdminRoute.jsx';
 import ProtectedCleanerRoute from './components/ProtectedCleanerRoute.jsx';
+import CleanerStatsPage from './Cleaner/CleanerStatsPage.jsx';
+import BookingHistoryPage from './Cleaner/BookingHistoryPage.jsx'
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
@@ -82,7 +84,8 @@ function App() {
           <Route element={<ProtectedCleanerRoute />}>
             <Route path="/cleaner/dashboard" element={<CleanerDashboard onLogout={handleLogout} />} />
             <Route path="/cleaner/services" element={<ServiceManagementPage />} />
-            {/* Add other cleaner-only routes here (e.g., stats, history) */}
+            <Route path="/cleaner/stats" element={<CleanerStatsPage />} />
+            <Route path="/cleaner/booking-history" element={<BookingHistoryPage />} />
           </Route>
 
           {/* --- Root Path Handling --- */}

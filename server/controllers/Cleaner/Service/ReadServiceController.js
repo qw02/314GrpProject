@@ -1,5 +1,5 @@
-import { ServiceEntity } from '../../entities/ServiceEntity.js';
-import pool from '../../db.js';
+import { ServiceEntity } from '../../../entities/ServiceEntity.js';
+import pool from '../../../db.js';
 
 /**
  * Controller for handling the retrieval of a single service by its ID.

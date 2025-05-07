@@ -1,6 +1,6 @@
-import { User } from '../../models/User.js';
-import { UserAccountEntity } from '../../entities/UserAccountEntity.js';
-import pool from '../../db.js';
+import { User } from '../../../models/User.js';
+import { UserAccountEntity } from '../../../entities/UserAccountEntity.js';
+import pool from '../../../db.js';
 
 /**
  * Controller for handling the creation of user accounts via admin requests.

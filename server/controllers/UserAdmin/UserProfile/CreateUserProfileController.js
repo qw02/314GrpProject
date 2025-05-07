@@ -1,6 +1,6 @@
-import { UserProfileEntity } from '../../entities/UserProfileEntity.js';
-import { UserProfile } from '../../models/UserProfile.js';
-import pool from '../../db.js';
+import { UserProfileEntity } from '../../../entities/UserProfileEntity.js';
+import { UserProfile } from '../../../models/UserProfile.js';
+import pool from '../../../db.js';
 
 /**
  * Controller for creating user profiles.

@@ -97,7 +97,7 @@ function ServiceManagementPage() {
     setIsFetchingCategories(true);
     clearMessages();
     try {
-      const fetchedCategories = await apiCall('/api/service/categories'); // Uses GET by default
+      const fetchedCategories = await apiCall('/api/platform/serviceCategory/search'); // Uses GET by default
       console.log('Fetched categories:', fetchedCategories);
       setCategories(fetchedCategories || []);
       if (fetchedCategories && fetchedCategories.length > 0) {
@@ -128,7 +128,7 @@ function ServiceManagementPage() {
       showMessage('Please select a service category.');
       return;
     }
-    if (!loggedInUsername) { // Check if username is available
+    if (!loggedInUsername) {
       showMessage('User information not available. Cannot create service.', 'error');
       return;
     }
@@ -139,7 +139,7 @@ function ServiceManagementPage() {
       if (isNaN(price) || price < 0) {
         throw new Error('Please enter a valid, non-negative price per hour.');
       }
-      const result = await apiCall('/api/service', 'POST', {
+      const result = await apiCall('/api/cleaner/service', 'POST', {
         cleanerUsername: loggedInUsername,
         categoryId: parseInt(selectedCategoryId, 10),
         description: createDescription,
@@ -171,7 +171,7 @@ function ServiceManagementPage() {
       if (searchParams.minPrice) query.append('minPrice', searchParams.minPrice);
       if (searchParams.maxPrice) query.append('maxPrice', searchParams.maxPrice);
 
-      const results = await apiCall(`/api/service/search?${query.toString()}`);
+      const results = await apiCall(`/api/cleaner/service/search?${query.toString()}`);
 
       setSearchResults(results || []);
       if (!results || results.length === 0) {
@@ -197,7 +197,7 @@ function ServiceManagementPage() {
     clearMessages();
     setSelectedService(null); // Clear previous selection
     try {
-      const serviceDetails = await apiCall(`/api/service/${serviceId}`); // GET by default
+      const serviceDetails = await apiCall(`/api/cleaner/service/${serviceId}`); // GET by default
       setSelectedService(serviceDetails);
       // Pre-fill update form
       setUpdateDescription(serviceDetails.description);
@@ -224,7 +224,7 @@ function ServiceManagementPage() {
         throw new Error('Please enter a valid, non-negative price per hour.');
       }
 
-      const result = await apiCall(`/api/service/${selectedService.serviceId}`, 'PUT', {
+      const result = await apiCall(`/api/cleaner/service/${selectedService.serviceId}`, 'PUT', {
         description: updateDescription,
         pricePerHour: price,
       });
@@ -246,7 +246,7 @@ function ServiceManagementPage() {
     setIsLoading(true);
     clearMessages();
     try {
-      const result = await apiCall(`/api/service/${selectedService.serviceId}`, 'DELETE');
+      const result = await apiCall(`/api/cleaner/service/${selectedService.serviceId}`, 'DELETE');
       showMessage(result.message || `Service ${selectedService.serviceId} deactivated successfully!`, 'success');
       // Clear selection and go back to search tab
       setSelectedService(null);

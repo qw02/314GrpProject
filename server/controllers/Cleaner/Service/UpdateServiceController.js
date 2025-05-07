@@ -1,6 +1,6 @@
-import { Service } from '../../models/Service.js';
-import { ServiceEntity } from '../../entities/ServiceEntity.js';
-import pool from '../../db.js';
+import { Service } from '../../../models/Service.js';
+import { ServiceEntity } from '../../../entities/ServiceEntity.js';
+import pool from '../../../db.js';
 
 /**
  * Controller for handling the update of an existing service.

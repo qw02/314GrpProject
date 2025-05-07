@@ -1,5 +1,4 @@
 import { Service } from '../models/Service.js';
-import { ServiceCategory } from '../models/ServiceCategory.js';
 
 /**
  * Manages database operations for the Service entity.
@@ -196,31 +195,6 @@ export class ServiceEntity {
     } catch (error) {
       console.error("Database error during service deactivation:", error);
       throw new Error('Database error during service deactivation.');
-    }
-  }
-
-  /**
-   * Retrieves a list of all active service categories.
-   * Fetches categories marked as active in the database.
-   * @returns {Promise<ServiceCategory[]>} An array of active ServiceCategory objects.
-   */
-  async getActiveCategories() {
-    const sql = `
-      SELECT id, name, description
-      FROM ServiceCategory
-      WHERE isActive = TRUE
-      ORDER BY name ASC
-    `;
-    try {
-      const [rows] = await this.dbPool.query(sql);
-      return rows.map(row => new ServiceCategory(
-        row.id,
-        row.name,
-        row.description
-      ));
-    } catch (error) {
-      console.error("Database error while fetching active service categories:", error);
-      throw new Error('Database error while fetching active service categories.');
     }
   }
 }

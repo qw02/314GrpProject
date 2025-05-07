@@ -1,5 +1,5 @@
-import { UserProfileEntity } from '../../entities/UserProfileEntity.js';
-import pool from '../../db.js';
+import { UserProfileEntity } from '../../../entities/UserProfileEntity.js';
+import pool from '../../../db.js';
 
 /**
  * Controller for reading user profile details.

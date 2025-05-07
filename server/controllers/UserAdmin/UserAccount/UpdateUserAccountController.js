@@ -1,6 +1,6 @@
-import { UserAccountEntity } from "../../entities/UserAccountEntity.js";
-import { User } from '../../models/User.js';
-import pool from '../../db.js';
+import { UserAccountEntity } from "../../../entities/UserAccountEntity.js";
+import { User } from '../../../models/User.js';
+import pool from '../../../db.js';
 
 /**
  * Controller for updating user account details (e.g., password).

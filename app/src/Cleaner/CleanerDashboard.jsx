@@ -35,16 +35,13 @@ function CleanerDashboard({ onLogout }) {
       <nav>
         <ul>
           <li>
-            {/* Link to the Service Management Page */}
             <Link to="/cleaner/services">Manage My Services</Link>
           </li>
           <li>
-            {/* Placeholder link for future Stats page */}
-            <Link to="#">View Stats</Link> {/* Update 'to' prop when route is ready */}
+            <Link to="/cleaner/stats">View Stats</Link>
           </li>
           <li>
-            {/* Placeholder link for future History page */}
-            <Link to="#">View Booking History</Link> {/* Update 'to' prop when route is ready */}
+            <Link to="/cleaner/booking-history">View Booking History</Link>
           </li>
         </ul>
       </nav>

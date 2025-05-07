@@ -1,6 +1,6 @@
-import { Service } from '../../models/Service.js';
-import { ServiceEntity } from '../../entities/ServiceEntity.js';
-import pool from '../../db.js';
+import { Service } from '../../../models/Service.js';
+import { ServiceEntity } from '../../../entities/ServiceEntity.js';
+import pool from '../../../db.js';
 
 /**
  * Controller for handling the creation of service bookings.
@@ -31,20 +31,6 @@ export class CreateServiceController {
       } else {
         res.status(500);
       }
-    } catch (error) {
-      res.status(500);
-    }
-  }
-
-  /**
-   * Handles GET /api/service/categories
-   * @param {import('express').Request} req
-   * @param {import('express').Response} res
-   */
-  getCategories = async (req, res) => {
-    try {
-      const categories = await this.serviceEntity.getActiveCategories();
-      res.status(200).json(categories);
     } catch (error) {
       res.status(500);
     }
