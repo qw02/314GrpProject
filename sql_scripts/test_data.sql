@@ -1,5 +1,9 @@
 -- UserAccount test data
 INSERT INTO UserAccount (username, password, role, isActive) VALUES
+('admin', '1234', 'UserAdmin', TRUE),
+('cleaner', '1234', 'Cleaner', TRUE),
+('homeowner', '1234', 'HomeOwner', TRUE),
+('manager', '1234', 'PlatformManager', TRUE),
 ('admin1', '1234', 'UserAdmin', TRUE),
 ('admin2', '1234', 'UserAdmin', TRUE),
 ('admin3', '1234', 'UserAdmin', TRUE),

@@ -72,10 +72,10 @@ function LoginPage({ onLoginSuccess }) {
         <div>
           <label htmlFor="role">Login as:</label>
           <select id="role" value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="HomeOwner">HomeOwner</option>
+            {/*<option value="HomeOwner">HomeOwner</option>*/}
             <option value="Cleaner">Cleaner</option>
             <option value="UserAdmin">UserAdmin</option>
-            <option value="PlatformManager">Platform Manager</option>
+            {/*<option value="PlatformManager">Platform Manager</option>*/}
           </select>
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}

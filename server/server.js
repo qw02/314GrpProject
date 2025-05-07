@@ -129,8 +129,8 @@ app.get('/api/cleaner/bookingHistory/booking/:bookingId', readBookingHistoryCont
 // Platform Management - Service Category API
 app.get('/api/platform/serviceCategory/search', searchServiceCategoryController.searchCategories);
 
-// Basic root route
-app.get('/', (req, res) => {
+// API Health Check
+app.get('/api/test', (req, res) => {
   res.send('Cleaner Platform Backend is running...');
 });
 

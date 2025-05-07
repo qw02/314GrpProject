@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import LoginPage from './LoginPage';
-import AdminDashboard from './UserAdmin/AdminDashboard.jsx';
-import AccountManagementPage from './UserAdmin/AccountManagementPage.jsx';
-import ProfileManagementPage from './UserAdmin/ProfileManagementPage.jsx';
-import CleanerDashboard from './Cleaner/CleanerDashboard.jsx';
-import ServiceManagementPage from './Cleaner/ServiceManagementPage.jsx';
+import LoginPage from './Boundary/LoginPage.jsx';
+import AdminDashboard from './Boundary/UserAdmin/AdminDashboard.jsx';
+import AccountManagementPage from './Boundary/UserAdmin/AccountManagementPage.jsx';
+import ProfileManagementPage from './Boundary/UserAdmin/ProfileManagementPage.jsx';
+import CleanerDashboard from './Boundary/Cleaner/CleanerDashboard.jsx';
+import ServiceManagementPage from './Boundary/Cleaner/ServiceManagementPage.jsx';
 import ProtectedAdminRoute from './components/ProtectedAdminRoute.jsx';
 import ProtectedCleanerRoute from './components/ProtectedCleanerRoute.jsx';
-import CleanerStatsPage from './Cleaner/CleanerStatsPage.jsx';
-import BookingHistoryPage from './Cleaner/BookingHistoryPage.jsx'
+import CleanerStatsPage from './Boundary/Cleaner/CleanerStatsPage.jsx';
+import BookingHistoryPage from './Boundary/Cleaner/BookingHistoryPage.jsx'
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
@@ -70,22 +70,23 @@ function App() {
           <Route
             path="/login"
             // If already logged in, redirect away from login page
-            element={loggedInUser ? <Navigate to={getRedirectPath(loggedInUser)} replace /> : <LoginPage onLoginSuccess={handleLoginSuccess} />}
+            element={loggedInUser ? <Navigate to={getRedirectPath(loggedInUser)} replace/> :
+              <LoginPage onLoginSuccess={handleLoginSuccess}/>}
           />
 
           {/* --- Admin Protected Routes --- */}
-          <Route element={<ProtectedAdminRoute />}>
-            <Route path="/admin/dashboard" element={<AdminDashboard onLogout={handleLogout} />} />
-            <Route path="/admin/accounts" element={<AccountManagementPage />} />
-            <Route path="/admin/profiles" element={<ProfileManagementPage />} />
+          <Route element={<ProtectedAdminRoute/>}>
+            <Route path="/admin/dashboard" element={<AdminDashboard onLogout={handleLogout}/>}/>
+            <Route path="/admin/accounts" element={<AccountManagementPage/>}/>
+            <Route path="/admin/profiles" element={<ProfileManagementPage/>}/>
           </Route>
 
           {/* --- Cleaner Protected Routes --- */}
-          <Route element={<ProtectedCleanerRoute />}>
-            <Route path="/cleaner/dashboard" element={<CleanerDashboard onLogout={handleLogout} />} />
-            <Route path="/cleaner/services" element={<ServiceManagementPage />} />
-            <Route path="/cleaner/stats" element={<CleanerStatsPage />} />
-            <Route path="/cleaner/booking-history" element={<BookingHistoryPage />} />
+          <Route element={<ProtectedCleanerRoute/>}>
+            <Route path="/cleaner/dashboard" element={<CleanerDashboard onLogout={handleLogout}/>}/>
+            <Route path="/cleaner/services" element={<ServiceManagementPage/>}/>
+            <Route path="/cleaner/stats" element={<CleanerStatsPage/>}/>
+            <Route path="/cleaner/booking-history" element={<BookingHistoryPage/>}/>
           </Route>
 
           {/* --- Root Path Handling --- */}
@@ -94,14 +95,14 @@ function App() {
             element={
               loggedInUser
                 // Redirect logged-in users to their respective dashboards
-                ? <Navigate to={getRedirectPath(loggedInUser)} replace />
+                ? <Navigate to={getRedirectPath(loggedInUser)} replace/>
                 // If not logged in, redirect to login
-                : <Navigate to="/login" replace />
+                : <Navigate to="/login" replace/>
             }
           />
 
           {/* --- Fallback Route --- */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/" replace/>}/>
 
         </Routes>
       </div>
