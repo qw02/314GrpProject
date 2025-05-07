@@ -72,6 +72,7 @@ function LoginPage({ onLoginSuccess }) {
         <div>
           <label htmlFor="role">Login as:</label>
           <select id="role" value={role} onChange={(e) => setRole(e.target.value)}>
+            <option>Select ...</option>
             {/*<option value="HomeOwner">HomeOwner</option>*/}
             <option value="Cleaner">Cleaner</option>
             <option value="UserAdmin">UserAdmin</option>
