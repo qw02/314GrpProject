@@ -28,7 +28,22 @@ cd 314GrpProject
     *(Replace `YOUR_MYSQL_USERNAME` with your actual MySQL username. You'll be prompted for your password.)*
     Alternatively, open `SQL_Scripts/create_tables.sql` in your MySQL client and run the script manually.
 
-### 3. Backend Setup (Server)
+### 3. (Optional) Load Dummy Test Data
+
+If you wish to populate your database with sample data for testing and development, you may load the provided test data script after creating the tables:
+
+1.  Ensure you have already completed the database setup above.
+2.  From the project root directory, run:
+    ```bash
+    mysql -u YOUR_MYSQL_USERNAME -p cleaning_platform_db < SQL_Scripts/test_data.sql
+    ```
+    *(Replace `YOUR_MYSQL_USERNAME` with your actual MySQL username. You will be prompted for your password.)*
+
+    Alternatively, you may open `SQL_Scripts/test_data.sql` in your MySQL client and execute the statements manually.
+
+*This step is optional, but highly recommended for exploring the application's features with pre-filled users, jobs, and other records.*
+
+### 4. Backend Setup (Server)
 
 1.  Navigate to the server directory:
     ```bash
@@ -67,7 +82,7 @@ cd 314GrpProject
     ```
     *(Keep this terminal running. It should indicate the server is listening on the `PORT` specified in `.env`, e.g., 5000.)*
 
-### 4. Frontend Setup (Client)
+### 5. Frontend Setup (Client)
 
 1.  Open a **new** terminal window.
 2.  Navigate to the client directory from the project root:
@@ -85,7 +100,7 @@ cd 314GrpProject
     ```
     *(Vite will typically start the frontend on `http://localhost:5173` or similar. Check the terminal output.)*
 
-### 5. Access the Application
+### 6. Access the Application
 
 1.  Open your web browser and navigate to the frontend URL provided by Vite (e.g., `http://localhost:5173`).
 2.  You should see the login page.
@@ -118,4 +133,4 @@ Then log in via the web interface using:
 
 -   `app/`: React frontend application (using Vite)
 -   `server/`: Express.js backend API
--   `SQL_Scripts/`: Contains database schema setup scripts
+-   `SQL_Scripts/`: Contains database schema setup scripts and optional test data
