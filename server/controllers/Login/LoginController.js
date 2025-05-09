@@ -29,10 +29,10 @@ export class LoginController {
       if (validatedUser) {
         res.status(200).json({ username: validatedUser.username, role: validatedUser.role });
       } else {
-        res.status(500);
+        res.status(400).json({ message: 'Invalid username or password.' });
       }
     } catch (error) {
-      res.status(500);
+      res.status(500).json ({ message: 'Internal Server Error'});
     }
   }
 }

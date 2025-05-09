@@ -13,7 +13,7 @@ export class ReadServiceController {
   }
 
   /**
-   * Handles GET /api/service/:id
+   * Handles GET /api/homeowner/service/:id
    * @param {import('express').Request} req
    * @param {import('express').Response} res
    */

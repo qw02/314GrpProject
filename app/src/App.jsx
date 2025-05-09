@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import ProtectedAdminRoute from './components/ProtectedAdminRoute.jsx';
+import ProtectedCleanerRoute from './components/ProtectedCleanerRoute.jsx';
+import ProtectedHomeOwnerRoute from './components/ProtectedHomeOwnerRoute.jsx';
 import LoginPage from './Boundary/LoginPage.jsx';
 import AdminDashboard from './Boundary/UserAdmin/AdminDashboard.jsx';
 import AccountManagementPage from './Boundary/UserAdmin/AccountManagementPage.jsx';
 import ProfileManagementPage from './Boundary/UserAdmin/ProfileManagementPage.jsx';
 import CleanerDashboard from './Boundary/Cleaner/CleanerDashboard.jsx';
 import ServiceManagementPage from './Boundary/Cleaner/ServiceManagementPage.jsx';
-import ProtectedAdminRoute from './components/ProtectedAdminRoute.jsx';
-import ProtectedCleanerRoute from './components/ProtectedCleanerRoute.jsx';
 import CleanerStatsPage from './Boundary/Cleaner/CleanerStatsPage.jsx';
 import BookingHistoryPage from './Boundary/Cleaner/BookingHistoryPage.jsx'
+import HomeOwnerDashboard from './Boundary/HomeOwner/HomeOwnerDashboard.jsx';
+import HomeOwnerServicePage from './Boundary/HomeOwner/HomeOwnerServicePage.jsx';
+import HomeOwnerShortlistPage from "./Boundary/HomeOwner/HomeOwnerShortlistPage.jsx";
+import HomeOwnerBookingHistoryPage from "./Boundary/HomeOwner/HomeOwnerBookingHistoryPage.jsx";
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
@@ -38,7 +43,6 @@ function App() {
   };
 
   const handleLogout = () => {
-    const user = loggedInUser;
     localStorage.removeItem('loggedInUser');
     setLoggedInUser(null);
   };
@@ -51,7 +55,7 @@ function App() {
       case 'Cleaner':
         return "/cleaner/dashboard";
       case 'HomeOwner':
-        return "/home/dashboard";
+        return "/homeowner/dashboard";
       case 'PlatformManager':
         return "/platform/dashboard";
       default:
@@ -87,6 +91,14 @@ function App() {
             <Route path="/cleaner/services" element={<ServiceManagementPage/>}/>
             <Route path="/cleaner/stats" element={<CleanerStatsPage/>}/>
             <Route path="/cleaner/booking-history" element={<BookingHistoryPage/>}/>
+          </Route>
+
+          {/* --- Home Owner Protected Routes --- */}
+          <Route element={<ProtectedHomeOwnerRoute/>}>
+            <Route path="/homeowner/dashboard" element={<HomeOwnerDashboard onLogout={handleLogout}/>}/>
+            <Route path="/homeowner/services" element={<HomeOwnerServicePage/>}/>
+            <Route path="/homeowner/shortlist" element={<HomeOwnerShortlistPage/>}/>
+            <Route path="/homeowner/history" element={<HomeOwnerBookingHistoryPage/>}/>
           </Route>
 
           {/* --- Root Path Handling --- */}

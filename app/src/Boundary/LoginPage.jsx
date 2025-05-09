@@ -47,6 +47,7 @@ function LoginPage({ onLoginSuccess }) {
             break;
         }
       } else {
+        console.error('Login failed:', data);
         setError(data.message || 'Login failed. Please check your credentials and selected role.');
       }
     } catch (err) {
@@ -73,9 +74,9 @@ function LoginPage({ onLoginSuccess }) {
           <label htmlFor="role">Login as:</label>
           <select id="role" value={role} onChange={(e) => setRole(e.target.value)}>
             <option>Select ...</option>
-            {/*<option value="HomeOwner">HomeOwner</option>*/}
-            <option value="Cleaner">Cleaner</option>
             <option value="UserAdmin">UserAdmin</option>
+            <option value="Cleaner">Cleaner</option>
+            <option value="HomeOwner">HomeOwner</option>
             {/*<option value="PlatformManager">Platform Manager</option>*/}
           </select>
         </div>

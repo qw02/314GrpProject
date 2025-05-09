@@ -24,7 +24,7 @@ import { UpdateUserProfileController } from './controllers/UserAdmin/UserProfile
 import { DeleteUserProfileController } from './controllers/UserAdmin/UserProfile/DeleteUserProfileController.js';
 import { SearchUserProfileController } from './controllers/UserAdmin/UserProfile/SearchUserProfileController.js';
 
-// Service Controllers
+// Cleaner Service Controllers
 import { CreateServiceController } from './controllers/Cleaner/Service/CreateServiceController.js';
 import { ReadServiceController } from './controllers/Cleaner/Service/ReadServiceController.js';
 import { UpdateServiceController } from './controllers/Cleaner/Service/UpdateServiceController.js';
@@ -38,6 +38,24 @@ import { ReadShortlistedCountController } from './controllers/Cleaner/Statistics
 // Cleaner Booking History Controllers
 import { ReadBookingHistoryController } from './controllers/Cleaner/Matches/ReadBookingHistoryController.js';
 import { SearchBookingHistoryController } from "./controllers/Cleaner/Matches/SearchBookingHistoryController.js";
+
+// Homeowner Service Controllers
+import {
+  ReadServiceController as HomeOwnerReadServiceController
+} from './controllers/HomeOwner/Cleaners/ReadServiceController.js';
+import {
+  SearchServiceController as HomeOwnerSearchServiceController
+} from './controllers/HomeOwner/Cleaners/SearchServiceController.js';
+
+// Homeowner Shortlist Controllers
+import { CreateShortlistController } from "./controllers/HomeOwner/Shortlist/CreateShortlistController.js";
+import { ReadShortlistController } from "./controllers/HomeOwner/Shortlist/ReadShortlistController.js";
+import { SearchShortlistController } from "./controllers/HomeOwner/Shortlist/SearchShortlistController.js";
+
+// Homeowner Booking History Controllers
+import { ReadHistoryController } from './controllers/HomeOwner/Bookings/ReadHistoryController.js';
+import { SearchHistoryController } from './controllers/HomeOwner/Bookings/SearchHistoryController.js';
+
 
 // Service Category Controllers
 import { SearchSvcCateController } from "./controllers/PlatformManagement/ServiceCategory/SearchSvcCateController.js";
@@ -73,7 +91,7 @@ const updateUserProfileController = new UpdateUserProfileController();
 const deleteUserProfileController = new DeleteUserProfileController();
 const searchUserProfileController = new SearchUserProfileController();
 
-// Service Controllers
+// Cleaner Service Controllers
 const createServiceController = new CreateServiceController();
 const readServiceController = new ReadServiceController();
 const updateServiceController = new UpdateServiceController();
@@ -88,7 +106,20 @@ const readShortlistedCountController = new ReadShortlistedCountController();
 const readBookingHistoryController = new ReadBookingHistoryController();
 const searchBookingHistoryController = new SearchBookingHistoryController();
 
-// Service Category Controllers
+// Homeowner Service Controllers
+const homeOwnerReadServiceController = new HomeOwnerReadServiceController();
+const homeOwnerSearchServiceController = new HomeOwnerSearchServiceController();
+
+// Homeowner Shortlist Controllers
+const createShortlistController = new CreateShortlistController();
+const readShortlistController = new ReadShortlistController();
+const searchShortlistController = new SearchShortlistController();
+
+// Homeowner Booking History Controllers
+const readHistoryController = new ReadHistoryController();
+const searchHistoryController = new SearchHistoryController();
+
+// Platform Management Service Category Controllers
 const searchServiceCategoryController = new SearchSvcCateController();
 
 // ================================================================================
@@ -126,13 +157,23 @@ app.get('/api/cleaner/serviceStats/:username', readShortlistedCountController.ge
 app.get('/api/cleaner/bookingHistory/search', searchBookingHistoryController.searchBookingHistory);
 app.get('/api/cleaner/bookingHistory/booking/:bookingId', readBookingHistoryController.readBookingHistory);
 
+// Homeowner - Service API
+app.get('/api/homeowner/service/:id', homeOwnerReadServiceController.getService);
+app.get('/api/homeowner/services/search', homeOwnerSearchServiceController.searchServices);
+
+// Homeowner - Shortlist API
+app.post('/api/homeowner/shortlist', createShortlistController.createShortlist);
+app.get('/api/homeowner/shortlist/entry/:homeOwnerUsername/:serviceId', readShortlistController.checkShortlistEntry);
+app.get('/api/homeowner/shortlist/search', searchShortlistController.searchShortlistedServices);
+
+// Homeowner - Booking History API
+app.get('/api/homeowner/booking/:bookingId', readHistoryController.getBookingDetailsById);
+app.get('/api/homeowner/bookings/search', searchHistoryController.searchBookings);
+
+
 // Platform Management - Service Category API
 app.get('/api/platform/serviceCategory/search', searchServiceCategoryController.searchCategories);
 
-// API Health Check
-app.get('/api/test', (req, res) => {
-  res.send('Cleaner Platform Backend is running...');
-});
 
 // Start server
 app.listen(PORT, () => {
