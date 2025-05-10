@@ -97,6 +97,32 @@ function HomeOwnerShortlistPage() {
     }
   }, [loggedInUsername, clearMessages, showMessage]);
 
+  const handleRemoveFromShortlist = async (serviceId) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to remove this service from your shortlist?"
+      )
+    ) {
+      return;
+    }
+
+    setIsLoading(true);
+    clearMessages();
+    try {
+      await apiCall(
+        `/api/homeowner/shortlist/delete/${loggedInUsername}/${serviceId}`,
+        "DELETE"
+      );
+      showMessage("Service removed from shortlist successfully!", "success");
+      // Refresh the list after removal
+      fetchAllShortlistedServices();
+    } catch (error) {
+      showMessage(error.message || "Failed to remove service from shortlist.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // --- Effect to get logged-in username on mount ---
   useEffect(() => {
     const storedUser = localStorage.getItem("loggedInUser");
@@ -370,9 +396,9 @@ function HomeOwnerShortlistPage() {
           <h4>Shortlisted Services:</h4>
           {searchResults.length > 0 ? (
             <ul style={{ listStyle: "none", padding: 0 }}>
-              {searchResults.map((serviceId) => (
+              {searchResults.map((service) => (
                 <li
-                  key={serviceId}
+                  key={service.serviceId}
                   style={{
                     marginBottom: "10px",
                     padding: "10px",
@@ -380,25 +406,57 @@ function HomeOwnerShortlistPage() {
                     borderRadius: "4px",
                   }}
                 >
-                  Service ID: {serviceId}
-                  <button
-                    onClick={() => fetchServiceDetails(serviceId)}
-                    style={{
-                      marginLeft: "10px",
-                      padding: "5px 10px",
-                      backgroundColor: "#007bff",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                    }}
-                    disabled={isFetchingDetails}
+                  <div>
+                    <strong>{service.categoryName}</strong>
+                    <span style={{ color: "#666" }}>
+                      {" "}
+                      by {service.cleanerUsername}
+                    </span>
+                    <br />
+                    <em>
+                      {service.description.substring(0, 100)}
+                      {service.description.length > 100 ? "..." : ""}
+                    </em>
+                    <br />
+                    Price: €{service.pricePerHour.toFixed(2)}/hr
+                  </div>
+                  <div
+                    style={{ display: "flex", gap: "10px", marginTop: "10px" }}
                   >
-                    {isFetchingDetails &&
-                    selectedService?.serviceId === serviceId
-                      ? "Loading..."
-                      : "View Details"}
-                  </button>
+                    <button
+                      onClick={() => fetchServiceDetails(service.serviceId)}
+                      style={{
+                        padding: "5px 10px",
+                        backgroundColor: "#007bff",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                      }}
+                      disabled={isFetchingDetails}
+                    >
+                      {isFetchingDetails &&
+                      selectedService?.serviceId === service.serviceId
+                        ? "Loading..."
+                        : "View Details"}
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleRemoveFromShortlist(service.serviceId)
+                      }
+                      style={{
+                        padding: "5px 10px",
+                        backgroundColor: "#dc3545",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                      }}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Removing..." : "Remove"}
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>
