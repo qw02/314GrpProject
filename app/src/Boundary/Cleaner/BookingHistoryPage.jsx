@@ -53,7 +53,7 @@ function BookingHistoryPage() {
     clearMessages();
     try {
       // Using the existing endpoint for service categories
-      const fetchedCategories = await apiCall('/api/platform/serviceCategory/search');
+      const fetchedCategories = await apiCall('/api/platform/serviceCategories/search');
       setCategories(fetchedCategories || []);
     } catch (error) {
       showMessage(error.message || 'Failed to load service categories for filtering.');

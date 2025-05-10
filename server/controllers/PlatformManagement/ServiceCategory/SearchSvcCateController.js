@@ -14,15 +14,16 @@ export class SearchSvcCateController {
 
   /**
    * Handles GET /api/serviceCategory/search
-   * @param {import('express').Request} req
+   * @param {import('express').Request} req - Expected query: { term: string }
    * @param {import('express').Response} res
    */
   searchCategories = async (req, res) => {
+    const searchTerm = req.query.term;
     try {
-      const categories = await this.serviceCategoryEntity.getActiveCategories();
+      const categories = await this.serviceCategoryEntity.searchServiceCategories(searchTerm);
       res.status(200).json(categories);
     } catch (error) {
-      res.status(500);
+      res.status(500).json({ message: 'Internal server error.' });
     }
   }
 }

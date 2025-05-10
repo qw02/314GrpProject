@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import ProtectedAdminRoute from './components/ProtectedAdminRoute.jsx';
 import ProtectedCleanerRoute from './components/ProtectedCleanerRoute.jsx';
 import ProtectedHomeOwnerRoute from './components/ProtectedHomeOwnerRoute.jsx';
+import ProtectedPlatformRoute from './components/ProtectedPlatformRoute.jsx';
 import LoginPage from './Boundary/LoginPage.jsx';
 import AdminDashboard from './Boundary/UserAdmin/AdminDashboard.jsx';
 import AccountManagementPage from './Boundary/UserAdmin/AccountManagementPage.jsx';
@@ -15,6 +16,9 @@ import HomeOwnerDashboard from './Boundary/HomeOwner/HomeOwnerDashboard.jsx';
 import HomeOwnerServicePage from './Boundary/HomeOwner/HomeOwnerServicePage.jsx';
 import HomeOwnerShortlistPage from "./Boundary/HomeOwner/HomeOwnerShortlistPage.jsx";
 import HomeOwnerBookingHistoryPage from "./Boundary/HomeOwner/HomeOwnerBookingHistoryPage.jsx";
+import PlatformDashboard from "./Boundary/Platform/PlatformDashbaord.jsx";
+import ServiceCategoryManagementPage from "./Boundary/Platform/ServiceCategoryManagementPage.jsx";
+import PlatformReportsPage from "./Boundary/Platform/PlatformReportsPage.jsx";
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
@@ -100,6 +104,14 @@ function App() {
             <Route path="/homeowner/shortlist" element={<HomeOwnerShortlistPage/>}/>
             <Route path="/homeowner/history" element={<HomeOwnerBookingHistoryPage/>}/>
           </Route>
+
+          {/* --- Platform Manager Protected Routes --- */}
+          <Route element={<ProtectedPlatformRoute/>}>
+            <Route path="/platform/dashboard" element={<PlatformDashboard onLogout={handleLogout}/>}/>
+            <Route path="/platform/serviceCategory" element={<ServiceCategoryManagementPage/>}/>
+            <Route path="/platform/reports" element={<PlatformReportsPage/>}/>
+          </Route>
+
 
           {/* --- Root Path Handling --- */}
           <Route

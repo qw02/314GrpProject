@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 function LoginPage({ onLoginSuccess }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('HomeOwner');
+  const [role, setRole] = useState('Select ...');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -77,7 +77,7 @@ function LoginPage({ onLoginSuccess }) {
             <option value="UserAdmin">UserAdmin</option>
             <option value="Cleaner">Cleaner</option>
             <option value="HomeOwner">HomeOwner</option>
-            {/*<option value="PlatformManager">Platform Manager</option>*/}
+            <option value="PlatformManager">Platform Manager</option>
           </select>
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}

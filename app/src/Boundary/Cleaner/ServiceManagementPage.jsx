@@ -97,12 +97,10 @@ function ServiceManagementPage() {
     setIsFetchingCategories(true);
     clearMessages();
     try {
-      const fetchedCategories = await apiCall('/api/platform/serviceCategory/search'); // Uses GET by default
+      const fetchedCategories = await apiCall('/api/platform/serviceCategories/search'); // Uses GET by default
       console.log('Fetched categories:', fetchedCategories);
       setCategories(fetchedCategories || []);
       if (fetchedCategories && fetchedCategories.length > 0) {
-        // Optionally pre-select the first category
-        // setSelectedCategoryId(fetchedCategories[0].id);
       } else {
         showMessage('No service categories found. Please contact support.', 'info');
       }

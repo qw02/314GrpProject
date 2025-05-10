@@ -93,7 +93,7 @@ function HomeOwnerBookingHistoryPage() {
     setIsFetchingCategories(true);
     try {
       // Assuming the same category endpoint as in ServiceManagementPage
-      const fetchedCategories = await apiCall('/api/platform/serviceCategory/search');
+      const fetchedCategories = await apiCall('/api/platform/serviceCategories/search');
       setCategories(fetchedCategories || []);
     } catch (error) {
       showMessage(error.message || 'Failed to load service categories for filtering.');
