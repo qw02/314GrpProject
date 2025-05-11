@@ -12,15 +12,13 @@ function AdminDashboard({ onLogout }) {
   let username = 'Admin';
   const storedUser = localStorage.getItem('loggedInUser');
   if (storedUser) {
-    try {
-      username = JSON.parse(storedUser).username || username;
-    } catch (e) { console.error("Couldn't parse user for dashboard"); }
+    username = JSON.parse(storedUser).username || username;
   }
 
   return (
     <div>
       <h2>UserAdmin Dashboard</h2>
-      <p>Welcome, {username}! ☆</p>
+      <p>Welcome, {username}!</p>
       <nav>
         <ul>
           <li><Link to="/admin/accounts">Manage User Accounts</Link></li>

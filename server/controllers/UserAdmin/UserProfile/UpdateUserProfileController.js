@@ -35,12 +35,12 @@ export class UpdateUserProfileController {
     try {
       const success = await this.userProfileEntity.updateProfile(profileModel);
       if (success) {
-        res.status(200).json({ message: `Profile for user '${username}' updated successfully.` });
+        res.status(200).json(true);
       } else {
-        res.status(500);
+        res.status(500).json(false);
       }
     } catch (error) {
-      res.status(500);
+      res.status(500).json(false);
     }
   }
 }

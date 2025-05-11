@@ -21,7 +21,6 @@ export class SearchServiceController {
   searchServices = async (req, res) => {
     const { username, categoryName, description, minPrice, maxPrice } = req.query;
 
-    // Prepare search parameters, converting price strings to numbers if they exist
     const searchParams = {
       username: username,
       categoryName: categoryName,
@@ -34,7 +33,7 @@ export class SearchServiceController {
       const services = await this.serviceEntity.searchServices(searchParams);
       res.status(200).json(services);
     } catch (error) {
-      res.status(500).json({ message: 'An error occurred during the service search.' });
+      res.status(500).json(null);
     }
   }
 }

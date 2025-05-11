@@ -18,17 +18,17 @@ export class ReadServiceController {
    * @param {import('express').Response} res
    */
   getService = async (req, res) => {
-    const serviceId  = req.params.id;
+    const serviceId = req.params.id;
 
     try {
       const service = await this.serviceEntity.getServiceById(serviceId);
       if (service) {
         res.status(200).json(service);
       } else {
-        res.status(404).json({ message: `Service with id:${serviceId} not found.` });
+        res.status(500).json(null);
       }
     } catch (error) {
-      res.status(500).json({ message: 'An error occurred while retrieving the service.' });
+      res.status(500).json(null);
     }
   }
 }

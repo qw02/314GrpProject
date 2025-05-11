@@ -24,7 +24,7 @@ export class ReadProfileViewCountController {
       const viewCount = await this.cleanerViewStatsEntity.getProfileViewCount(cleanerUsername);
       res.status(200).json(viewCount);
     } catch (error) {
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json(null);
     }
   };
 }

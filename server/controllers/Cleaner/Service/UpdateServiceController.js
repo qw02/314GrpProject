@@ -28,12 +28,12 @@ export class UpdateServiceController {
     try {
       const success = await this.serviceEntity.updateService(serviceUpdateData);
       if (success) {
-        res.status(200).json({ message: `Service with id:${serviceId} updated successfully.` });
+        res.status(200).json(true);
       } else {
-        res.status(500);
+        res.status(500).json(false);
       }
     } catch (error) {
-      res.status(500);
+      res.status(500).json(false);
     }
   }
 }

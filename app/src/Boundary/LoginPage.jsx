@@ -24,7 +24,6 @@ function LoginPage({ onLoginSuccess }) {
       const data = await response.json();
 
       if (response.ok) {
-        console.log('Login successful:', data);
         onLoginSuccess(data);
 
         // Determine redirect path based on the role confirmed by the backend
@@ -42,17 +41,13 @@ function LoginPage({ onLoginSuccess }) {
             navigate('/platform/dashboard', { replace: true });
             break;
           default:
-            console.warn(`Login successful, but no specific dashboard route for role: ${data.role}. Redirecting to root.`);
             navigate('/', { replace: true });
             break;
         }
-      } else {
-        console.error('Login failed:', data);
-        setError(data.message || 'Login failed. Please check your credentials and selected role.');
       }
     } catch (err) {
       console.error('Login API call failed:', err);
-      setError('An unexpected error occurred during login.');
+      setError('Login failed. Please check your credentials and selected role.');
     } finally {
       setIsLoading(false);
     }

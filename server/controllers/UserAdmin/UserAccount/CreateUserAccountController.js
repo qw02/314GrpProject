@@ -24,14 +24,14 @@ export class CreateUserAccountController {
     const newUserModel = new User(username, password, role);
 
     try {
-      const success = await this.userAccountEntity.createUser(newUserModel);
+      const success = await this.UserAccountEntity.createUser(newUserModel);
       if (success) {
-        res.status(201).json({ message: `User account '${username}' (${role}) created successfully.` });
+        res.status(200).json(true);
       } else {
-        res.status(500);
+        res.status(500).json(false);
       }
     } catch (error) {
-      res.status(500);
+      res.status(500).json(false);
     }
   }
 }

@@ -25,14 +25,14 @@ export class CreateServiceController {
     const service = new Service(undefined, cleanerUsername, categoryId, description, pricePerHour);
 
     try {
-      const id = await this.serviceEntity.createService(service);
-      if (id) {
-        res.status(201).json({ message: `Service with id:${id} created successfully.` });
+      const success = await this.serviceEntity.createService(service);
+      if (success) {
+        res.status(200).json(true);
       } else {
-        res.status(500);
+        res.status(500).json(false);
       }
     } catch (error) {
-      res.status(500);
+      res.status(500).json(false);
     }
   }
 }

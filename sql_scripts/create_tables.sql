@@ -46,8 +46,8 @@ CREATE TABLE Service
 
 CREATE TABLE CleanerProfileView
 (
-    username VARCHAR(255) NOT NULL,
-    viewCount       INT DEFAULT 0,
+    username  VARCHAR(255) NOT NULL,
+    viewCount INT DEFAULT 0,
     PRIMARY KEY (username),
     FOREIGN KEY (username) REFERENCES UserAccount (username)
 );
@@ -55,7 +55,7 @@ CREATE TABLE CleanerProfileView
 CREATE TABLE Shortlist
 (
     homeOwnerUsername VARCHAR(255) NOT NULL,
-    serviceID INT NOT NULL,
+    serviceID         INT          NOT NULL,
     PRIMARY KEY (homeOwnerUsername, serviceID), -- Composite key: Homeowner can only shortlist a specific service once
     FOREIGN KEY (homeOwnerUsername) REFERENCES UserAccount (username),
     FOREIGN KEY (serviceID) REFERENCES Service (serviceID)

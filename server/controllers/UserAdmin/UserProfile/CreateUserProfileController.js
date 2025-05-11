@@ -26,12 +26,12 @@ export class CreateUserProfileController {
     try {
       const success = await this.userProfileEntity.createProfile(profileModel);
       if (success) {
-        res.status(200).json({ message: `User profile for '${username}' created successfully.` });
+        res.status(200).json(true);
       } else {
-        res.status(500);
+        res.status(500).json(false);
       }
     } catch (error) {
-      res.status(500);
+      res.status(500).json(false);
     }
   }
 }

@@ -1,35 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-// --- Reusable API Call Helper (assuming it's defined elsewhere or passed as prop) ---
-// If not defined globally, you'd import it or define it here.
-// For this example, we assume `apiCall` exists in the scope.
+// --- Helper Function for API Calls ---
 async function apiCall(url, method = 'GET', body = null) {
   const apiUrl = url.startsWith('/api') ? url : `/api${url.startsWith('/') ? '' : '/'}${url}`;
   const options = { method, headers: {} };
-  // Add authorization header if needed, e.g., from localStorage
-  // const token = localStorage.getItem('authToken');
-  // if (token) { options.headers['Authorization'] = `Bearer ${token}`; }
   if (body) {
     options.headers['Content-Type'] = 'application/json';
     options.body = JSON.stringify(body);
   }
-  try {
-    const response = await fetch(apiUrl, options);
-    const contentType = response.headers.get("content-type");
-    let data;
-    if (response.status === 204) { return { message: `Operation successful (Status: ${response.status})` }; }
-    if (contentType && contentType.indexOf("application/json") !== -1) { data = await response.json(); } else {
-      const textResponse = await response.text();
-      if (!response.ok) { throw new Error(textResponse || `HTTP error! status: ${response.status}`); }
-      return { message: textResponse || `Operation successful (Status: ${response.status})` };
-    }
-    if (!response.ok) { throw new Error(data.message || `HTTP error! status: ${response.status}`); }
-    return data;
-  } catch (error) {
-    console.error(`API call failed: ${method} ${apiUrl}`, error);
-    throw error;
+
+  const response = await fetch(apiUrl, options);
+  if (!response.ok) {
+    throw new Error();
   }
+
+  return await response.json();
 }
 
 /**
