@@ -4,9 +4,6 @@ export class CleanerBookingEntity {
   /** @type {import('mysql2/promise').Pool} */
   dbPool;
 
-  /**
-   * @param {import('mysql2/promise').Pool} dbPool
-   */
   constructor(dbPool) {
     this.dbPool = dbPool;
   }
@@ -25,15 +22,14 @@ export class CleanerBookingEntity {
     const { bookingDateStart, bookingDateEnd, categoryID } = searchCriteria;
 
     let sql = `
-      SELECT
-        b.bookingID,
-        b.homeOwnerUsername,
-        DATE_FORMAT(b.bookingDate, '%Y-%m-%d') AS bookingDate,
-        sc.name AS serviceCategoryName
-      FROM Booking b
-      JOIN Service s ON b.serviceID = s.serviceID
-      JOIN ServiceCategory sc ON s.categoryID = sc.id
-      WHERE s.cleanerUsername = ?
+        SELECT b.bookingID,
+               b.homeOwnerUsername,
+               DATE_FORMAT(b.bookingDate, '%Y-%m-%d') AS bookingDate,
+               sc.name                                AS serviceCategoryName
+        FROM Booking b
+                 JOIN Service s ON b.serviceID = s.serviceID
+                 JOIN ServiceCategory sc ON s.categoryID = sc.id
+        WHERE s.cleanerUsername = ?
     `;
     const params = [cleanerUsername];
 
@@ -63,7 +59,6 @@ export class CleanerBookingEntity {
         )
       );
     } catch (error) {
-      console.error('Database error during searchConfirmedMatches:', error);
       throw new Error('Database error during booking search.');
     }
   }
@@ -76,16 +71,15 @@ export class CleanerBookingEntity {
    */
   async getConfirmedMatchDetails(bookingId) {
     const sql = `
-      SELECT
-        b.bookingID,
-        b.homeOwnerUsername,
-        DATE_FORMAT(b.bookingDate, '%Y-%m-%d') AS bookingDate,
-        sc.name AS serviceCategoryName,
-        s.description AS serviceDescription
-      FROM Booking b
-      JOIN Service s ON b.serviceID = s.serviceID
-      JOIN ServiceCategory sc ON s.categoryID = sc.id
-      WHERE b.bookingID = ?
+        SELECT b.bookingID,
+               b.homeOwnerUsername,
+               DATE_FORMAT(b.bookingDate, '%Y-%m-%d') AS bookingDate,
+               sc.name                                AS serviceCategoryName,
+               s.description                          AS serviceDescription
+        FROM Booking b
+                 JOIN Service s ON b.serviceID = s.serviceID
+                 JOIN ServiceCategory sc ON s.categoryID = sc.id
+        WHERE b.bookingID = ?
     `;
     const params = [bookingId];
 
@@ -102,7 +96,6 @@ export class CleanerBookingEntity {
         row.serviceDescription
       );
     } catch (error) {
-      console.error('Database error during getConfirmedMatchDetails:', error);
       throw new Error('Database error during booking details retrieval.');
     }
   }

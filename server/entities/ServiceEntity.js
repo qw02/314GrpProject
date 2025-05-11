@@ -16,21 +16,20 @@ export class ServiceEntity {
   /**
    * Creates a new service entry in the database.
    * @param {Service} serviceModel - The service data transfer object containing details for the new service.
-   * @returns {Promise<number | null>} The ID of the newly created service, or null if creation failed.
+   * @returns {Promise<boolean>} True if the service was created successfully, false otherwise.
    */
   async createService(serviceModel) {
     const { cleanerUsername, categoryId, description, pricePerHour } = serviceModel;
     const sql = `
-      INSERT INTO Service (cleanerUsername, categoryID, description, pricePerHour, isActive)
-      VALUES (?, ?, ?, ?, TRUE)
+        INSERT INTO Service (cleanerUsername, categoryID, description, pricePerHour, isActive)
+        VALUES (?, ?, ?, ?, TRUE)
     `;
     let connection;
     try {
       connection = await this.dbPool.getConnection();
       const [result] = await connection.query(sql, [cleanerUsername, categoryId, description, pricePerHour]);
-      return result.insertId > 0 ? result.insertId : null; // Return the new ID
+      return result.insertId > 0;
     } catch (error) {
-      console.error("Database error during service creation:", error);
       throw new Error('Database error during service creation.');
     } finally {
       if (connection) connection.release();
@@ -45,9 +44,10 @@ export class ServiceEntity {
    */
   async getServiceById(serviceId) {
     const sql = `
-      SELECT serviceID, cleanerUsername, categoryID, description, pricePerHour
-      FROM Service
-      WHERE serviceID = ? AND isActive = TRUE
+        SELECT serviceID, cleanerUsername, categoryID, description, pricePerHour
+        FROM Service
+        WHERE serviceID = ?
+          AND isActive = TRUE
     `;
     try {
       const [rows] = await this.dbPool.query(sql, [serviceId]);
@@ -63,7 +63,6 @@ export class ServiceEntity {
       }
       return null;
     } catch (error) {
-      console.error("Database error while fetching service by ID:", error);
       throw new Error('Database error while fetching service by ID.');
     }
   }
@@ -84,11 +83,13 @@ export class ServiceEntity {
   async searchServices(searchParams = {}, descriptionLength = 100) {
     const { username, categoryName, description, minPrice, maxPrice } = searchParams;
     let sql = `
-        SELECT
-            s.serviceID, s.cleanerUsername, s.categoryID,
-            LEFT(s.description, ?) AS description, s.pricePerHour
+        SELECT s.serviceID,
+               s.cleanerUsername,
+               s.categoryID,
+               LEFT(s.description, ?) AS description,
+               s.pricePerHour
         FROM Service s
-        JOIN ServiceCategory sc ON s.categoryID = sc.id
+                 JOIN ServiceCategory sc ON s.categoryID = sc.id
         WHERE s.isActive = TRUE
     `;
     const params = [descriptionLength]; // Start params with description length
@@ -127,7 +128,6 @@ export class ServiceEntity {
         parseFloat(row.pricePerHour)
       ));
     } catch (error) {
-      console.error("Database error during service search:", error);
       throw new Error('Database error during service search.');
     }
   }
@@ -166,17 +166,17 @@ export class ServiceEntity {
     }
 
     const sql = `
-    UPDATE Service
-    SET ${setClauses.join(', ')}
-    WHERE serviceID = ? AND isActive = TRUE
-  `;
+        UPDATE Service
+        SET ${setClauses.join(', ')}
+        WHERE serviceID = ?
+          AND isActive = TRUE
+    `;
     params.push(serviceId);
 
     try {
       const [result] = await this.dbPool.query(sql, params);
       return result.affectedRows > 0;
     } catch (error) {
-      console.error("Database error during service update:", error);
       throw new Error('Database error during service update.');
     }
   }
@@ -193,7 +193,6 @@ export class ServiceEntity {
       const [result] = await this.dbPool.query(sql, [serviceId]);
       return result.affectedRows > 0;
     } catch (error) {
-      console.error("Database error during service deactivation:", error);
       throw new Error('Database error during service deactivation.');
     }
   }

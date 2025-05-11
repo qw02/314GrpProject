@@ -28,12 +28,13 @@ export class UpdateUserAccountController {
     try {
       const success = await this.userAccountEntity.updateUserPassword(userModel);
       if (success) {
-        res.status(200).json({ message: `Password for user '${username}' updated successfully.` });
+        res.status(200).json(true);
       } else {
-        res.status(500);
+        res.status(500).json(false);
       }
-    } catch (error) {
-      res.status(500);
+    } catch
+      (error) {
+      res.status(500).json(false);
     }
   }
 }

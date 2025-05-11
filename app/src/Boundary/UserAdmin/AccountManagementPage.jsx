@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 // --- Helper Function for API Calls ---
 async function apiCall(url, method = 'GET', body = null) {
   const apiUrl = url.startsWith('/api') ? url : `/api${url.startsWith('/') ? '' : '/'}${url}`;
   const options = { method, headers: {} };
-  if (body) { options.headers['Content-Type'] = 'application/json'; options.body = JSON.stringify(body); }
-  try {
-    const response = await fetch(apiUrl, options);
-    const contentType = response.headers.get("content-type");
-    let data;
-    if (response.status === 204) { return { message: `Operation successful (Status: ${response.status})` }; }
-    if (contentType && contentType.indexOf("application/json") !== -1) { data = await response.json(); }
-    else { const textResponse = await response.text(); if (!response.ok) { throw new Error(textResponse || `HTTP error! status: ${response.status}`); } return { message: textResponse || `Operation successful (Status: ${response.status})` }; }
-    if (!response.ok) { throw new Error(data.message || `HTTP error! status: ${response.status}`); }
-    return data;
-  } catch (error) { console.error(`API call failed: ${method} ${apiUrl}`, error); throw error; }
+  if (body) {
+    options.headers['Content-Type'] = 'application/json';
+    options.body = JSON.stringify(body);
+  }
+
+  const response = await fetch(apiUrl, options);
+  if (!response.ok) {
+    throw new Error();
+  }
+
+  return await response.json();
 }
 
 
@@ -45,25 +45,23 @@ function AccountManagementPage() {
   const showMessage = (text, type = 'error') => setMessage({ text, type });
 
   // --- Handler Functions ---
-
   const handleCreateAccount = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     clearMessages();
     try {
-      // Assuming create endpoint still takes role in body, adjust if needed
-      // Assuming endpoint is POST /api/useradmin/account
       const result = await apiCall('/api/useradmin/account', 'POST', {
         username: createUsername,
         password: createPassword,
         role: createRole,
       });
-      showMessage(result.message || 'Account created successfully!', 'success');
+      showMessage('Account created successfully!', 'success');
       setCreateUsername('');
       setCreatePassword('');
       setCreateRole('HomeOwner');
     } catch (error) {
-      showMessage(error.message || 'Failed to create account.');
+      console.error(error);
+      showMessage('Failed to create account.');
     } finally {
       setIsLoading(false);
     }
@@ -89,29 +87,27 @@ function AccountManagementPage() {
         showMessage('No accounts found matching criteria.', 'info');
       }
     } catch (error) {
-      showMessage(error.message || 'Failed to search accounts.');
+      showMessage('Failed to search accounts.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  // NEW: Function to fetch details when a username is selected
   const fetchAccountDetails = async (username) => {
     if (!username) return;
     setIsFetchingDetails(true); // Start details fetching indicator
     setSelectedAccount(null); // Clear previous selection details
     clearMessages();
     try {
-      // Use the new endpoint: GET /api/useradmin/account/:username/
       const accountData = await apiCall(`/api/useradmin/account/${username}/`, 'GET');
-      setSelectedAccount(accountData); // Store the fetched details
-      setUpdatePassword(''); // Clear password field
+      setSelectedAccount(accountData);
+      setUpdatePassword('');
       setActiveTab('details'); // Switch to details tab
     } catch (error) {
-      showMessage(error.message || `Failed to fetch details for ${username}.`, 'error');
-      setActiveTab('search'); // Stay on search tab or handle error appropriately
+      showMessage(`Failed to fetch details for ${username}.`, 'error');
+      setActiveTab('search');
     } finally {
-      setIsFetchingDetails(false); // Stop details fetching indicator
+      setIsFetchingDetails(false);
     }
   };
 
@@ -125,17 +121,15 @@ function AccountManagementPage() {
     setIsLoading(true);
     clearMessages();
     try {
-      // Use the username from selectedAccount for the URL
-      // Assuming PUT /api/useradmin/account/:username/
       const result = await apiCall(
-        `/api/useradmin/account/${selectedAccount.username}/`, // Use only username
+        `/api/useradmin/account/${selectedAccount.username}/`,
         'PUT',
         { password: updatePassword }
       );
-      showMessage(result.message || 'Password updated successfully!', 'success');
+      showMessage('Password updated successfully!', 'success');
       setUpdatePassword('');
     } catch (error) {
-      showMessage(error.message || 'Failed to update password.');
+      showMessage('Failed to update password.');
     } finally {
       setIsLoading(false);
     }
@@ -148,15 +142,14 @@ function AccountManagementPage() {
     setIsLoading(true);
     clearMessages();
     try {
-      // Assuming PUT /api/useradmin/account/:username/suspend
       const result = await apiCall(
-        `/api/useradmin/account/${selectedAccount.username}/suspend`, // Use only username
+        `/api/useradmin/account/${selectedAccount.username}/suspend`,
         'PUT'
       );
-      showMessage(result.message || 'Account suspended successfully!', 'success');
-      setSelectedAccount({ ...selectedAccount, isActive: false }); // Update local state
+      showMessage('Account suspended successfully!', 'success');
+      setSelectedAccount({ ...selectedAccount, isActive: false });
     } catch (error) {
-      showMessage(error.message || 'Failed to suspend account.');
+      showMessage('Failed to suspend account.');
     } finally {
       setIsLoading(false);
     }
@@ -169,13 +162,26 @@ function AccountManagementPage() {
       <h2>Manage User Accounts</h2>
 
       <div style={{ marginBottom: '15px', borderBottom: '1px solid #ccc', paddingBottom: '5px' }}>
-        <button onClick={() => { setActiveTab('create'); setSelectedAccount(null); clearMessages(); }} disabled={activeTab === 'create'}>Create</button>
-        <button onClick={() => { setActiveTab('search'); setSelectedAccount(null); clearMessages(); }} disabled={activeTab === 'search'}>Search</button>
-        <button onClick={() => setActiveTab('details')} disabled={activeTab === 'details' || !selectedAccount}>View/Update/Suspend</button>
+        <button onClick={() => {
+          setActiveTab('create');
+          setSelectedAccount(null);
+          clearMessages();
+        }} disabled={activeTab === 'create'}>Create
+        </button>
+        <button onClick={() => {
+          setActiveTab('search');
+          setSelectedAccount(null);
+          clearMessages();
+        }} disabled={activeTab === 'search'}>Search
+        </button>
+        <button onClick={() => setActiveTab('details')}
+                disabled={activeTab === 'details' || !selectedAccount}>View/Update/Suspend
+        </button>
       </div>
 
       {message.text && (
-        <p style={{ color: message.type === 'success' ? 'green' : (message.type === 'info' || message.type === 'warn' ? 'orange' : 'red') }}>
+        <p
+          style={{ color: message.type === 'success' ? 'green' : (message.type === 'info' || message.type === 'warn' ? 'orange' : 'red') }}>
           {message.text}
         </p>
       )}
@@ -189,18 +195,19 @@ function AccountManagementPage() {
           <form onSubmit={handleCreateAccount}>
             <div>
               <label>Username: </label>
-              <input type="text" value={createUsername} onChange={(e) => setCreateUsername(e.target.value)} required />
+              <input type="text" value={createUsername} onChange={(e) => setCreateUsername(e.target.value)} required/>
             </div>
             <div>
               <label>Password: </label>
-              <input type="password" value={createPassword} onChange={(e) => setCreatePassword(e.target.value)} required />
+              <input type="password" value={createPassword} onChange={(e) => setCreatePassword(e.target.value)}
+                     required/>
             </div>
             <div>
               <label>Role: </label>
               <select value={createRole} onChange={(e) => setCreateRole(e.target.value)}>
                 <option value="HomeOwner">Home Owner</option>
                 <option value="Cleaner">Cleaner</option>
-                <option value="UserAdmin">User Admin</option> {/* Updated Role Name */}
+                <option value="UserAdmin">User Admin</option>
                 <option value="PlatformManager">Platform Manager</option>
               </select>
             </div>
@@ -220,11 +227,12 @@ function AccountManagementPage() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <select value={searchRoleFilter} onChange={(e) => setSearchRoleFilter(e.target.value)} style={{ marginLeft: '10px' }}>
+            <select value={searchRoleFilter} onChange={(e) => setSearchRoleFilter(e.target.value)}
+                    style={{ marginLeft: '10px' }}>
               <option value="">Any Role</option>
               <option value="HomeOwner">Home Owner</option>
               <option value="Cleaner">Cleaner</option>
-              <option value="UserAdmin">User Admin</option> {/* Updated Role Name */}
+              <option value="UserAdmin">User Admin</option>
               <option value="PlatformManager">Platform Manager</option>
             </select>
             <button type="submit" style={{ marginLeft: '10px' }}>Search</button>
@@ -232,12 +240,11 @@ function AccountManagementPage() {
           <h4>Results:</h4>
           {searchResults.length > 0 ? (
             <ul>
-              {/* Iterate over the array of usernames (strings) */}
               {searchResults.map((username) => (
                 <li key={username}>
                   {username}
-                  {/* Button now triggers fetching details for the clicked username */}
-                  <button onClick={() => fetchAccountDetails(username)} style={{ marginLeft: '10px' }} disabled={isFetchingDetails}>
+                  <button onClick={() => fetchAccountDetails(username)} style={{ marginLeft: '10px' }}
+                          disabled={isFetchingDetails}>
                     {isFetchingDetails ? 'Loading...' : 'View/Manage'}
                   </button>
                 </li>
@@ -260,24 +267,23 @@ function AccountManagementPage() {
               <p><strong>Username:</strong> {selectedAccount.username}</p>
               <p><strong>Role:</strong> {selectedAccount.role}</p>
               <p><strong>Status:</strong> {selectedAccount.isActive ? 'Active' : 'Suspended'}</p>
-              {selectedAccount.createdAt && <p><strong>Created At:</strong> {new Date(selectedAccount.createdAt).toLocaleString()}</p>}
 
-              <hr />
+              <hr/>
               <h4>Update Password</h4>
               <form onSubmit={handleUpdatePassword}>
                 <label>New Password: </label>
-                <input type="password" value={updatePassword} onChange={(e) => setUpdatePassword(e.target.value)} required />
+                <input type="password" value={updatePassword} onChange={(e) => setUpdatePassword(e.target.value)}
+                       required/>
                 <button type="submit">Update Password</button>
               </form>
 
-              <hr />
+              <hr/>
               <h4>Suspend Account</h4>
               {selectedAccount.isActive ? (
                 <button onClick={handleSuspendAccount} style={{ backgroundColor: 'orange' }}>Suspend Account</button>
               ) : null}
             </div>
           ) : (
-            // Message shown if the details tab is active but no account is selected/loaded
             <p>Select an account from the Search tab to view details.</p>
           )}
         </div>

@@ -15,7 +15,6 @@ export class UserAccountEntity {
    */
   async createUser(userModel) {
     const { username, password, role } = userModel;
-    // Check if user with the same username and role already exists
     const checkSql = 'SELECT 1 FROM UserAccount WHERE username = ? AND role = ?';
     const insertSql = 'INSERT INTO UserAccount (username, password, role) VALUES (?, ?, ?)';
     let connection;
@@ -35,7 +34,7 @@ export class UserAccountEntity {
       return result.affectedRows > 0;
     } catch (error) {
       if (connection) await connection.rollback();
-      throw new Error('Database error during user account creation.');
+      return false;
     } finally {
       if (connection) connection.release();
     }
@@ -47,7 +46,7 @@ export class UserAccountEntity {
    * @returns {Promise<User | null>} The user model or null if not found.
    */
   async getUserAccount(username) {
-    const sql = 'SELECT username, isActive FROM UserAccount WHERE username = ?';
+    const sql = 'SELECT username, role, isActive FROM UserAccount WHERE username = ?';
     try {
       const [rows] = await this.dbPool.query(sql, [username]);
       if (rows.length > 0) {

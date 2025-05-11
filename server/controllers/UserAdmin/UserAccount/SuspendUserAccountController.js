@@ -23,12 +23,12 @@ export class SuspendUserAccountController {
     try {
       const success = await this.userAccountEntity.suspendUser(username);
       if (success) {
-        res.status(200).json({ message: `User account '${username}' suspended successfully.` });
+        res.status(200).json(true);
       } else {
-        res.status(500);
+        res.status(500).json(false);
       }
     } catch (error) {
-      res.status(500);
+      res.status(500).json(false);
     }
   }
 }

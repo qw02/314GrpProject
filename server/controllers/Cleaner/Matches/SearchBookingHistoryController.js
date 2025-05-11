@@ -29,10 +29,7 @@ export class SearchBookingHistoryController {
       );
       res.status(200).json(bookings);
     } catch (error) {
-      console.error('Error in searchBookingHistory:', error);
-      res
-        .status(500)
-        .json({ message: 'An error occurred during the booking history search.' });
+      res.status(500).json(null);
     }
-  };
+  }
 }

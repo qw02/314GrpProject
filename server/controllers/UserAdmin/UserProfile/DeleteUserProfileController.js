@@ -21,19 +21,15 @@ export class DeleteUserProfileController {
   deleteProfile = async (req, res) => {
     const { username } = req.params;
 
-    if (!username) {
-      return res.status(400).json({ message: 'Username is required in the URL path.' });
-    }
-
     try {
       const success = await this.userProfileEntity.deleteProfile(username);
       if (success) {
-        res.status(200).json({ message: `User profile for '${username}' deleted successfully.` });
+        res.status(200).json(true);
       } else {
-        res.status(500);
+        res.status(500).json(false);
       }
     } catch (error) {
-      res.status(500);
+      res.status(500).json(false);
     }
   }
 }

@@ -1,22 +1,21 @@
-// ./components/BookingHistoryPage.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 
-// Assume apiCall helper function is available (e.g., imported or defined globally)
+// --- Helper Function for API Calls ---
 async function apiCall(url, method = 'GET', body = null) {
   const apiUrl = url.startsWith('/api') ? url : `/api${url.startsWith('/') ? '' : '/'}${url}`;
   const options = { method, headers: {} };
-  if (body) { options.headers['Content-Type'] = 'application/json'; options.body = JSON.stringify(body); }
-  try {
-    const response = await fetch(apiUrl, options);
-    const contentType = response.headers.get("content-type");
-    let data;
-    if (response.status === 204) { return { message: `Operation successful (Status: ${response.status})` }; }
-    if (contentType && contentType.indexOf("application/json") !== -1) { data = await response.json(); }
-    else { const textResponse = await response.text(); if (!response.ok) { throw new Error(textResponse || `HTTP error! status: ${response.status}`); } return { message: textResponse || `Operation successful (Status: ${response.status})` }; }
-    if (!response.ok) { throw new Error(data.message || `HTTP error! status: ${response.status}`); }
-    return data;
-  } catch (error) { console.error(`API call failed: ${method} ${apiUrl}`, error); throw error; }
+  if (body) {
+    options.headers['Content-Type'] = 'application/json';
+    options.body = JSON.stringify(body);
+  }
+
+  const response = await fetch(apiUrl, options);
+  if (!response.ok) {
+    throw new Error();
+  }
+
+  return await response.json();
 }
 
 /**
@@ -35,13 +34,13 @@ function BookingHistoryPage() {
   const [searchParams, setSearchParams] = useState({
     bookingDateStart: '',
     bookingDateEnd: '',
-    categoryID: '', // Will store the ID of the selected category
+    categoryID: '',
   });
-  const [searchResults, setSearchResults] = useState([]); // Array of Booking DTOs (basic info)
-  const [categories, setCategories] = useState([]); // For category filter dropdown [{id, name}]
+  const [searchResults, setSearchResults] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   // View Tab State
-  const [selectedBookingDetails, setSelectedBookingDetails] = useState(null); // Full Booking DTO
+  const [selectedBookingDetails, setSelectedBookingDetails] = useState(null);
 
   // --- Helper Functions ---
   const showMessage = (text, type = 'error') => setMessage({ text, type });
@@ -56,7 +55,7 @@ function BookingHistoryPage() {
       const fetchedCategories = await apiCall('/api/platform/serviceCategories/search');
       setCategories(fetchedCategories || []);
     } catch (error) {
-      showMessage(error.message || 'Failed to load service categories for filtering.');
+      showMessage('Failed to load service categories for filtering.');
     } finally {
       setIsFetchingCategories(false);
     }
@@ -89,7 +88,7 @@ function BookingHistoryPage() {
       try {
         const userData = JSON.parse(storedUser);
         cleanerUsername = userData.username;
-      } catch (parseError) {
+      } catch (error) {
         showMessage('Could not retrieve your username. Please log in again.');
         setIsLoading(false);
         return;
@@ -115,7 +114,7 @@ function BookingHistoryPage() {
         showMessage('No booking history found matching your criteria.', 'info');
       }
     } catch (error) {
-      showMessage(error.message || 'Failed to search booking history.');
+      showMessage('Failed to search booking history.');
     } finally {
       setIsLoading(false);
     }
@@ -131,7 +130,7 @@ function BookingHistoryPage() {
       setSelectedBookingDetails(details);
       setActiveTab('view'); // Switch to view tab
     } catch (error) {
-      showMessage(error.message || `Failed to fetch details for booking ID ${bookingId}.`);
+      showMessage(`Failed to fetch details for booking ID ${bookingId}.`);
       setActiveTab('search'); // Revert to search tab on error
     } finally {
       setIsFetchingDetails(false);
@@ -146,13 +145,21 @@ function BookingHistoryPage() {
 
       {/* Tab Navigation */}
       <div style={{ marginBottom: '15px', borderBottom: '1px solid #ccc', paddingBottom: '5px' }}>
-        <button onClick={() => { setActiveTab('search'); setSelectedBookingDetails(null); clearMessages(); }} disabled={activeTab === 'search'}>Search History</button>
-        <button onClick={() => setActiveTab('view')} disabled={activeTab === 'view' || !selectedBookingDetails}>View Booking Detail</button>
+        <button onClick={() => {
+          setActiveTab('search');
+          setSelectedBookingDetails(null);
+          clearMessages();
+        }} disabled={activeTab === 'search'}>Search History
+        </button>
+        <button onClick={() => setActiveTab('view')} disabled={activeTab === 'view' || !selectedBookingDetails}>View
+          Booking Detail
+        </button>
       </div>
 
       {/* Feedback Messages */}
       {message.text && (
-        <p style={{ color: message.type === 'success' ? 'green' : (message.type === 'info' || message.type === 'warn' ? 'darkorange' : 'red') }}>
+        <p
+          style={{ color: message.type === 'success' ? 'green' : (message.type === 'info' || message.type === 'warn' ? 'darkorange' : 'red') }}>
           {message.text}
         </p>
       )}
@@ -167,23 +174,29 @@ function BookingHistoryPage() {
           <form onSubmit={handleSearchBookings}>
             <div>
               <label htmlFor="bookingDateStart">From Date: </label>
-              <input type="date" id="bookingDateStart" name="bookingDateStart" value={searchParams.bookingDateStart} onChange={handleSearchInputChange} />
+              <input type="date" id="bookingDateStart" name="bookingDateStart" value={searchParams.bookingDateStart}
+                     onChange={handleSearchInputChange}/>
             </div>
             <div style={{ marginTop: '10px' }}>
               <label htmlFor="bookingDateEnd">To Date: </label>
-              <input type="date" id="bookingDateEnd" name="bookingDateEnd" value={searchParams.bookingDateEnd} onChange={handleSearchInputChange} />
+              <input type="date" id="bookingDateEnd" name="bookingDateEnd" value={searchParams.bookingDateEnd}
+                     onChange={handleSearchInputChange}/>
             </div>
             <div style={{ marginTop: '10px' }}>
               <label htmlFor="categoryID">Service Category: </label>
-              <select id="categoryID" name="categoryID" value={searchParams.categoryID} onChange={handleSearchInputChange}>
+              <select id="categoryID" name="categoryID" value={searchParams.categoryID}
+                      onChange={handleSearchInputChange}>
                 <option value="">All Categories</option>
                 {categories.map(cat => (
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>
-              {categories.length === 0 && !isFetchingCategories && <span style={{marginLeft: '10px', color: 'orange'}}> (No categories loaded)</span>}
+              {categories.length === 0 && !isFetchingCategories &&
+                <span style={{ marginLeft: '10px', color: 'orange' }}> (No categories loaded)</span>}
             </div>
-            <button type="submit" style={{ marginTop: '15px' }} disabled={isLoading || isFetchingCategories}>Search Bookings</button>
+            <button type="submit" style={{ marginTop: '15px' }} disabled={isLoading || isFetchingCategories}>Search
+              Bookings
+            </button>
           </form>
 
           <h4 style={{ marginTop: '20px' }}>Results:</h4>
@@ -191,10 +204,11 @@ function BookingHistoryPage() {
             <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
               {searchResults.map(booking => (
                 <li key={booking.bookingId} style={{ border: '1px solid #eee', padding: '10px', marginBottom: '10px' }}>
-                  <strong>ID:</strong> {booking.bookingId} <br />
-                  <strong>HomeOwner:</strong> {booking.homeOwnerUsername} <br />
-                  <strong>Date:</strong> {new Date(booking.bookingDate + 'T00:00:00').toLocaleDateString()} <br /> {/* Ensure correct date parsing for display */}
-                  <strong>Category:</strong> {booking.serviceCategoryName} <br />
+                  <strong>ID:</strong> {booking.bookingId} <br/>
+                  <strong>HomeOwner:</strong> {booking.homeOwnerUsername} <br/>
+                  <strong>Date:</strong> {new Date(booking.bookingDate + 'T00:00:00').toLocaleDateString()}
+                  <br/>
+                  <strong>Category:</strong> {booking.serviceCategoryName} <br/>
                   <button
                     onClick={() => fetchBookingDetails(booking.bookingId)}
                     style={{ marginTop: '5px' }}
@@ -221,13 +235,23 @@ function BookingHistoryPage() {
             <div style={{ border: '1px solid #ddd', padding: '15px' }}>
               <p><strong>Booking ID:</strong> {selectedBookingDetails.bookingId}</p>
               <p><strong>HomeOwner:</strong> {selectedBookingDetails.homeOwnerUsername}</p>
-              <p><strong>Booking Date:</strong> {new Date(selectedBookingDetails.bookingDate + 'T00:00:00').toLocaleDateString()}</p>
+              <p><strong>Booking
+                Date:</strong> {new Date(selectedBookingDetails.bookingDate + 'T00:00:00').toLocaleDateString()}</p>
               <p><strong>Service Category:</strong> {selectedBookingDetails.serviceCategoryName}</p>
               <p><strong>Service Description Provided:</strong></p>
-              <p style={{ whiteSpace: 'pre-wrap', backgroundColor: '#f9f9f9', padding: '10px', border: '1px solid #eee' }}>
+              <p style={{
+                whiteSpace: 'pre-wrap',
+                backgroundColor: '#f9f9f9',
+                padding: '10px',
+                border: '1px solid #eee'
+              }}>
                 {selectedBookingDetails.serviceDescription || 'No specific description was recorded for this service.'}
               </p>
-              <button onClick={() => { setActiveTab('search'); setSelectedBookingDetails(null); clearMessages(); }} style={{ marginTop: '15px' }}>
+              <button onClick={() => {
+                setActiveTab('search');
+                setSelectedBookingDetails(null);
+                clearMessages();
+              }} style={{ marginTop: '15px' }}>
                 ← Back to Search Results
               </button>
             </div>

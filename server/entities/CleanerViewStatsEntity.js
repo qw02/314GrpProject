@@ -39,7 +39,6 @@ export class CleanerViewStatsEntity {
       const [rows] = await this.dbPool.query(sql, [cleanerUsername]);
       return rows[0].totalShortlists;
     } catch (error) {
-      console.error(`Error fetching shortlist count for ${cleanerUsername}:`, error);
       throw error;
     }
   }

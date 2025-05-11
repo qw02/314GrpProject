@@ -25,7 +25,7 @@ export class ReadShortlistedCountController {
       const serviceShortlistStats = await this.cleanerViewStatsEntity.getServiceShortlistStats(cleanerUsername);
       res.status(200).json(serviceShortlistStats);
     } catch (error) {
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json(null);
     }
   }
 }
