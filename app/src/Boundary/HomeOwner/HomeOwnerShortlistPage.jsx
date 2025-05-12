@@ -1,46 +1,21 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-// --- Reusable API Call Helper ---
-// This function is assumed to be similar to the one provided in your example.
-async function apiCall(url, method = "GET", body = null) {
-  const apiUrl = url.startsWith("/api")
-    ? url
-    : `/api${url.startsWith("/") ? "" : "/"}${url}`;
+// --- Helper Function for API Calls ---
+async function apiCall(url, method = 'GET', body = null) {
+  const apiUrl = url.startsWith('/api') ? url : `/api${url.startsWith('/') ? '' : '/'}${url}`;
   const options = { method, headers: {} };
   if (body) {
-    options.headers["Content-Type"] = "application/json";
+    options.headers['Content-Type'] = 'application/json';
     options.body = JSON.stringify(body);
   }
-  try {
-    const response = await fetch(apiUrl, options);
-    const contentType = response.headers.get("content-type");
-    let data;
-    if (response.status === 204) {
-      return { message: `Operation successful (Status: ${response.status})` };
-    }
-    if (contentType && contentType.indexOf("application/json") !== -1) {
-      data = await response.json();
-    } else {
-      const textResponse = await response.text();
-      if (!response.ok) {
-        throw new Error(
-          textResponse || `HTTP error! status: ${response.status}`
-        );
-      }
-      return {
-        message:
-          textResponse || `Operation successful (Status: ${response.status})`,
-      };
-    }
-    if (!response.ok) {
-      throw new Error(data.message || `HTTP error! status: ${response.status}`);
-    }
-    return data;
-  } catch (error) {
-    console.error(`API call failed: ${method} ${apiUrl}`, error);
-    throw error;
+
+  const response = await fetch(apiUrl, options);
+  if (!response.ok) {
+    throw new Error();
   }
+
+  return await response.json();
 }
 
 /**
@@ -91,18 +66,14 @@ function HomeOwnerShortlistPage() {
         showMessage("Your shortlist is currently empty.", "info");
       }
     } catch (error) {
-      showMessage(error.message || "Failed to fetch shortlisted services.");
+      showMessage("Failed to fetch shortlisted services.");
     } finally {
       setIsLoading(false);
     }
   }, [loggedInUsername, clearMessages, showMessage]);
 
   const handleRemoveFromShortlist = async (serviceId) => {
-    if (
-      !window.confirm(
-        "Are you sure you want to remove this service from your shortlist?"
-      )
-    ) {
+    if (!window.confirm("Are you sure you want to remove this service from your shortlist?")) {
       return;
     }
 
@@ -117,7 +88,7 @@ function HomeOwnerShortlistPage() {
       // Refresh the list after removal
       fetchAllShortlistedServices();
     } catch (error) {
-      showMessage(error.message || "Failed to remove service from shortlist.");
+      showMessage("Failed to remove service from shortlist.");
     } finally {
       setIsLoading(false);
     }
@@ -133,7 +104,7 @@ function HomeOwnerShortlistPage() {
           setLoggedInUsername(userData.username);
         } else {
           showMessage("Could not identify logged-in user.", "error");
-          navigate("/login", { replace: true }); // Redirect if username is critical
+          navigate("/login", { replace: true });
         }
       } catch (e) {
         localStorage.removeItem("loggedInUser");
@@ -148,7 +119,7 @@ function HomeOwnerShortlistPage() {
         "No user session found. Please log in to view your shortlist.",
         "error"
       );
-      navigate("/login", { replace: true }); // Shortlist requires login
+      navigate("/login", { replace: true });
     }
   }, [navigate, showMessage]);
 
@@ -159,7 +130,6 @@ function HomeOwnerShortlistPage() {
   }, [activeTab, loggedInUsername, fetchAllShortlistedServices]);
 
   // --- API Call Functions & Related Logic ---
-
   // Handle Shortlist Search
   const handleSearchShortlist = async (e) => {
     e.preventDefault();
@@ -194,7 +164,7 @@ function HomeOwnerShortlistPage() {
         );
       }
     } catch (error) {
-      showMessage(error.message || "Failed to search your shortlist.");
+      showMessage("Failed to search your shortlist.");
     } finally {
       setIsLoading(false);
     }
@@ -212,16 +182,13 @@ function HomeOwnerShortlistPage() {
     clearMessages();
     setSelectedService(null);
     try {
-      // Uses the same endpoint as HomeOwnerServicePage to get service details
       const serviceDetails = await apiCall(
         `/api/homeowner/service/${serviceId}`
       );
       setSelectedService(serviceDetails);
-      setActiveTab("viewDetail"); // Switch to viewDetail tab
+      setActiveTab("viewDetail");
     } catch (error) {
-      showMessage(
-        error.message || `Failed to fetch details for service ID ${serviceId}.`
-      );
+      showMessage(`Failed to fetch details.`);
     } finally {
       setIsFetchingDetails(false);
     }
@@ -280,8 +247,8 @@ function HomeOwnerShortlistPage() {
               message.type === "success"
                 ? "green"
                 : message.type === "info"
-                ? "darkorange"
-                : "red",
+                  ? "darkorange"
+                  : "red",
           }}
         >
           {message.text}
@@ -296,8 +263,7 @@ function HomeOwnerShortlistPage() {
         <div>
           <h3>Welcome Back, {loggedInUsername}!</h3>
           <p>
-            Here you can manage and review the services you've shortlisted. ( ´
-            ▽ ` )ﾉ
+            Here you can manage and review the services you've shortlisted.
           </p>
           <p>
             Click on the "Search My Shortlist" tab to find specific services or
@@ -412,12 +378,12 @@ function HomeOwnerShortlistPage() {
                       {" "}
                       by {service.cleanerUsername}
                     </span>
-                    <br />
+                    <br/>
                     <em>
                       {service.description.substring(0, 100)}
                       {service.description.length > 100 ? "..." : ""}
                     </em>
-                    <br />
+                    <br/>
                     Price: €{service.pricePerHour.toFixed(2)}/hr
                   </div>
                   <div
@@ -498,8 +464,7 @@ function HomeOwnerShortlistPage() {
             </div>
           ) : (
             <p>
-              Please select a service ID from the "Search My Shortlist" tab to
-              view its details. (⌒_⌒;)
+              Please select a service ID from the "Search My Shortlist" tab to view its details.
             </p>
           )}
         </div>

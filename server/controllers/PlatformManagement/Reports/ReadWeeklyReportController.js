@@ -20,12 +20,12 @@ export class ReadWeeklyReportController {
    */
   getWeeklyStats = async (req, res) => {
     const { monday } = req.params;
-    console.log('monday', monday);
+
     try {
       const dto = await this.metricsEntity.getWeeklyStats(monday);
       res.status(200).json(dto);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(500).json(null);
     }
   };
 }

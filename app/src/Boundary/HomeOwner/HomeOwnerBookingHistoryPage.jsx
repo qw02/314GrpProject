@@ -1,46 +1,21 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-// --- Reusable API Call Helper ---
-// Assuming this is available globally or imported, similar to previous examples.
-async function apiCall(url, method = "GET", body = null) {
-  const apiUrl = url.startsWith("/api")
-    ? url
-    : `/api${url.startsWith("/") ? "" : "/"}${url}`;
+// --- Helper Function for API Calls ---
+async function apiCall(url, method = 'GET', body = null) {
+  const apiUrl = url.startsWith('/api') ? url : `/api${url.startsWith('/') ? '' : '/'}${url}`;
   const options = { method, headers: {} };
   if (body) {
-    options.headers["Content-Type"] = "application/json";
+    options.headers['Content-Type'] = 'application/json';
     options.body = JSON.stringify(body);
   }
-  try {
-    const response = await fetch(apiUrl, options);
-    const contentType = response.headers.get("content-type");
-    let data;
-    if (response.status === 204) {
-      return { message: `Operation successful (Status: ${response.status})` };
-    }
-    if (contentType && contentType.indexOf("application/json") !== -1) {
-      data = await response.json();
-    } else {
-      const textResponse = await response.text();
-      if (!response.ok) {
-        throw new Error(
-          textResponse || `HTTP error! status: ${response.status}`
-        );
-      }
-      return {
-        message:
-          textResponse || `Operation successful (Status: ${response.status})`,
-      };
-    }
-    if (!response.ok) {
-      throw new Error(data.message || `HTTP error! status: ${response.status}`);
-    }
-    return data;
-  } catch (error) {
-    console.error(`API call failed: ${method} ${apiUrl}`, error);
-    throw error;
+
+  const response = await fetch(apiUrl, options);
+  if (!response.ok) {
+    throw new Error();
   }
+
+  return await response.json();
 }
 
 /**
@@ -94,7 +69,7 @@ function HomeOwnerBookingHistoryPage() {
         showMessage("You have no booking history yet.", "info");
       }
     } catch (error) {
-      showMessage(error.message || "Failed to fetch booking history.");
+      showMessage("Failed to fetch booking history.");
     } finally {
       setIsLoading(false);
     }
@@ -110,21 +85,15 @@ function HomeOwnerBookingHistoryPage() {
           setLoggedInUsername(userData.username);
         } else {
           showMessage("Could not identify logged-in user.", "error");
-          navigate("/login", { replace: true }); // Redirect if username is crucial
+          navigate("/login", { replace: true });
         }
       } catch (e) {
         localStorage.removeItem("loggedInUser");
-        showMessage(
-          "Error reading user session. Please log in again.",
-          "error"
-        );
+        showMessage("Error reading user session. Please log in again.", "error");
         navigate("/login", { replace: true });
       }
     } else {
-      showMessage(
-        "No user session found. Please log in to view booking history.",
-        "error"
-      );
+      showMessage("No user session found. Please log in to view booking history.", "error");
       navigate("/login", { replace: true });
     }
   }, [navigate, showMessage]);
@@ -139,9 +108,7 @@ function HomeOwnerBookingHistoryPage() {
       );
       setCategories(fetchedCategories || []);
     } catch (error) {
-      showMessage(
-        error.message || "Failed to load service categories for filtering."
-      );
+      showMessage("Failed to load service categories for filtering.");
     } finally {
       setIsFetchingCategories(false);
     }
@@ -193,7 +160,7 @@ function HomeOwnerBookingHistoryPage() {
         showMessage("No bookings found matching your criteria.", "info");
       }
     } catch (error) {
-      showMessage(error.message || "Failed to search for bookings.");
+      showMessage("Failed to search for bookings.");
     } finally {
       setIsLoading(false);
     }
@@ -207,15 +174,11 @@ function HomeOwnerBookingHistoryPage() {
       clearMessages();
       setBookingDetails(null);
       try {
-        // As discussed, assuming the route parameter is the bookingId itself.
         const details = await apiCall(`/api/homeowner/booking/${bookingId}`);
         setBookingDetails(details);
         setActiveTab("details");
       } catch (error) {
-        showMessage(
-          error.message ||
-            `Failed to fetch details for booking ID ${bookingId}.`
-        );
+        showMessage(`Failed to fetch details for booking.`);
         setActiveTab("search"); // Go back to search if details fail
       } finally {
         setIsFetchingDetails(false);
@@ -226,8 +189,8 @@ function HomeOwnerBookingHistoryPage() {
 
   // Function to trigger fetching details and switch tab
   const handleViewDetailsClick = (bookingId) => {
-    setSelectedBookingId(bookingId); // Set the ID
-    fetchBookingDetails(bookingId); // Then fetch
+    setSelectedBookingId(bookingId);
+    fetchBookingDetails(bookingId);
   };
 
   // --- Render Logic ---
@@ -276,8 +239,8 @@ function HomeOwnerBookingHistoryPage() {
               message.type === "success"
                 ? "green"
                 : message.type === "info"
-                ? "darkorange"
-                : "red",
+                  ? "darkorange"
+                  : "red",
           }}
         >
           {message.text}
@@ -401,8 +364,7 @@ function HomeOwnerBookingHistoryPage() {
           ) : (
             !message.text && (
               <p>
-                No booking history results to display. Please try different
-                search filters. (˘･_･˘)
+                No booking history results to display. Please try different search filters.
               </p>
             )
           )}
@@ -448,11 +410,10 @@ function HomeOwnerBookingHistoryPage() {
             </div>
           ) : (
             (selectedBookingId && (
-              <p>Loading details for booking ID {selectedBookingId}...</p>
+              <p>Loading details for booking...</p>
             )) || (
               <p>
                 Select a booking from the search results to view its details.
-                (*＾▽＾)／
               </p>
             )
           )}

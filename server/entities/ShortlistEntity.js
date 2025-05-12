@@ -31,7 +31,6 @@ export class ShortlistEntity {
       ]);
       return result.affectedRows > 0;
     } catch (error) {
-      console.error("Database error during shortlist creation:", error);
       throw new Error("Database error during shortlist creation.");
     } finally {
       if (connection) connection.release();
@@ -125,10 +124,6 @@ export class ShortlistEntity {
         categoryName: row.categoryName,
       }));
     } catch (error) {
-      console.error(
-        "Database error during shortlisted services search:",
-        error
-      );
       throw new Error("Database error during shortlisted services search.");
     }
   }
@@ -137,7 +132,7 @@ export class ShortlistEntity {
    * Deletes a specific shortlist entry from the database.
    * @param {string} homeownerUsername - The username of the homeowner.
    * @param {number} serviceId - The ID of the service.
-   * @returns {Promise<boolean>} True if the entry was deleted successfully, throws an error otherwise.
+   * @returns {Promise<boolean>} True if the entry was deleted successfully.
    */
   async deleteShortlistEntry(homeownerUsername, serviceId) {
     const sql = `
@@ -150,10 +145,7 @@ export class ShortlistEntity {
         homeownerUsername,
         serviceId,
       ]);
-      if (result.affectedRows === 0) {
-        throw new Error("Shortlist entry not found");
-      }
-      return true;
+      return result.affectedRows > 0;
     } catch (error) {
       console.error("Error deleting shortlist entry:", error);
       throw error;

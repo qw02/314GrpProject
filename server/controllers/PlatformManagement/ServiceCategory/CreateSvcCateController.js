@@ -24,12 +24,12 @@ export class CreateServiceCategoryController {
     try {
       const success = await this.serviceCategoryEntity.createServiceCategory(name, description);
       if (success) {
-        res.status(201).json({ message: `Service category created successfully.` });
+        res.status(200).json(true);
       } else {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json(false);
       }
     } catch (error) {
-      res.status(500).json({ message: 'Internal server error.' });
+      res.status(500).json(false);
     }
   }
 }

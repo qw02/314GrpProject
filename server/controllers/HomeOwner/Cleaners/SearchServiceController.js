@@ -34,7 +34,7 @@ export class SearchServiceController {
       const services = await this.serviceEntity.searchServices(searchParams);
       res.status(200).json(services);
     } catch (error) {
-      res.status(500).json({ message: 'An error occurred during the service search.' });
+      res.status(500).json(null);
     }
   }
 }

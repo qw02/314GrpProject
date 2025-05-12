@@ -37,8 +37,12 @@ import { ReadBookingHistoryController } from "./controllers/Cleaner/Matches/Read
 import { SearchBookingHistoryController } from "./controllers/Cleaner/Matches/SearchBookingHistoryController.js";
 
 // Homeowner Service Controllers
-import { ReadServiceController as HomeOwnerReadServiceController } from "./controllers/HomeOwner/Cleaners/ReadServiceController.js";
-import { SearchServiceController as HomeOwnerSearchServiceController } from "./controllers/HomeOwner/Cleaners/SearchServiceController.js";
+import {
+  ReadServiceController as HomeOwnerReadServiceController
+} from "./controllers/HomeOwner/Cleaners/ReadServiceController.js";
+import {
+  SearchServiceController as HomeOwnerSearchServiceController
+} from "./controllers/HomeOwner/Cleaners/SearchServiceController.js";
 // Homeowner Shortlist Controllers
 import { CreateShortlistController } from "./controllers/HomeOwner/Shortlist/CreateShortlistController.js";
 import { ReadShortlistController } from "./controllers/HomeOwner/Shortlist/ReadShortlistController.js";
@@ -49,10 +53,18 @@ import { ReadHistoryController } from "./controllers/HomeOwner/Bookings/ReadHist
 import { SearchHistoryController } from "./controllers/HomeOwner/Bookings/SearchHistoryController.js";
 
 // Service Category Controllers
-import { CreateServiceCategoryController } from "./controllers/PlatformManagement/ServiceCategory/CreateSvcCateController.js";
-import { ReadServiceCategoryController } from "./controllers/PlatformManagement/ServiceCategory/ReadSvcCateController.js";
-import { UpdateServiceCategoryController } from "./controllers/PlatformManagement/ServiceCategory/UpdateSvcCateController.js";
-import { DeleteServiceCategoryController } from "./controllers/PlatformManagement/ServiceCategory/DeleteSvcCateController.js";
+import {
+  CreateServiceCategoryController
+} from "./controllers/PlatformManagement/ServiceCategory/CreateSvcCateController.js";
+import {
+  ReadServiceCategoryController
+} from "./controllers/PlatformManagement/ServiceCategory/ReadSvcCateController.js";
+import {
+  UpdateServiceCategoryController
+} from "./controllers/PlatformManagement/ServiceCategory/UpdateSvcCateController.js";
+import {
+  DeleteServiceCategoryController
+} from "./controllers/PlatformManagement/ServiceCategory/DeleteSvcCateController.js";
 import { SearchSvcCateController } from "./controllers/PlatformManagement/ServiceCategory/SearchSvcCateController.js";
 
 // Metrics Controllers

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom'; // Assuming you use React Router for navigation
+import { Link } from 'react-router-dom';
 
-// --- Reusable API Call Helper (as provided in your example) ---
+// --- Helper Function for API Calls ---
 async function apiCall(url, method = 'GET', body = null) {
   const apiUrl = url.startsWith('/api') ? url : `/api${url.startsWith('/') ? '' : '/'}${url}`;
   const options = { method, headers: {} };
@@ -9,30 +9,13 @@ async function apiCall(url, method = 'GET', body = null) {
     options.headers['Content-Type'] = 'application/json';
     options.body = JSON.stringify(body);
   }
-  try {
-    const response = await fetch(apiUrl, options);
-    const contentType = response.headers.get("content-type");
-    let data;
-    if (response.status === 204) { // No Content
-      return { message: `Operation successful (Status: ${response.status})` };
-    }
-    if (contentType && contentType.indexOf("application/json") !== -1) {
-      data = await response.json();
-    } else {
-      const textResponse = await response.text();
-      if (!response.ok) {
-        throw new Error(textResponse || `HTTP error! status: ${response.status}`);
-      }
-      return { message: textResponse || `Operation successful (Status: ${response.status})` };
-    }
-    if (!response.ok) {
-      throw new Error(data.message || `HTTP error! status: ${response.status}`);
-    }
-    return data;
-  } catch (error) {
-    console.error(`API call failed: ${method} ${apiUrl}`, error);
-    throw error;
+
+  const response = await fetch(apiUrl, options);
+  if (!response.ok) {
+    throw new Error();
   }
+
+  return await response.json();
 }
 
 /**
@@ -136,12 +119,12 @@ function PlatformReportsPage() {
     try {
       const data = await apiCall(`/api/platform/report/daily/${dailyDate}`);
       setReportData(data);
-      if (!data || Object.keys(data).length === 0 || (data.message && !data.activeUserAccounts)) { // Check if it's an empty success or actual data
+      if (!data) {
         showMessage('No data returned, or an issue occurred fetching the report.', 'info');
-        setReportData(null); // Ensure no old data is shown
+        setReportData(null);
       }
     } catch (error) {
-      showMessage(error.message || 'Failed to generate daily report.', 'error');
+      showMessage('Failed to generate daily report.', 'error');
       setReportData(null);
     } finally {
       setIsLoading(false);
@@ -158,12 +141,12 @@ function PlatformReportsPage() {
     try {
       const data = await apiCall(`/api/platform/report/weekly/${weeklyMondayForApi}`);
       setReportData(data);
-      if (!data || Object.keys(data).length === 0 || (data.message && !data.activeUserAccounts)) {
+      if (!data) {
         showMessage('No data returned, or an issue occurred fetching the report.', 'info');
         setReportData(null);
       }
     } catch (error) {
-      showMessage(error.message || 'Failed to generate weekly report.', 'error');
+      showMessage('Failed to generate weekly report.', 'error');
       setReportData(null);
     } finally {
       setIsLoading(false);
@@ -176,12 +159,12 @@ function PlatformReportsPage() {
     try {
       const data = await apiCall(`/api/platform/report/monthly/${monthlyYear}/${monthlyMonth}`);
       setReportData(data);
-      if (!data || Object.keys(data).length === 0 || (data.message && !data.activeUserAccounts)) {
+      if (!data) {
         showMessage('No data returned, or an issue occurred fetching the report.', 'info');
         setReportData(null);
       }
     } catch (error) {
-      showMessage(error.message || 'Failed to generate monthly report.', 'error');
+      showMessage('Failed to generate monthly report.', 'error');
       setReportData(null);
     } finally {
       setIsLoading(false);
@@ -191,11 +174,6 @@ function PlatformReportsPage() {
   // --- Render Report Table ---
   const renderReportTable = (data) => {
     if (!data || data.message) return null; // Don't render table if only a message or no data
-
-    // Defensive checks for potentially null/undefined numeric values before toFixed
-    const formatPrice = (price) => price !== null && price !== undefined ? `$${parseFloat(price).toFixed(2)}` : 'N/A';
-    const formatPercentage = (percentage) => percentage !== null && percentage !== undefined ? `${parseFloat(percentage).toFixed(2)}%` : 'N/A';
-
 
     return (
       <div style={{ marginTop: '20px', border: '1px solid #eee', padding: '15px' }}>

@@ -83,7 +83,6 @@ function ServiceManagementPage() {
     clearMessages();
     try {
       const fetchedCategories = await apiCall('/api/platform/serviceCategories/search'); // Uses GET by default
-      console.log('Fetched categories:', fetchedCategories);
       setCategories(fetchedCategories || []);
       if (fetchedCategories && fetchedCategories.length > 0) {
       } else {
@@ -175,7 +174,6 @@ function ServiceManagementPage() {
 
   // Fetch Full Details for a Selected Service
   const fetchServiceDetails = async (serviceId) => {
-    console.log(`Fetching details for service ID: ${serviceId}`);
     setIsFetchingDetails(true);
     clearMessages();
     setSelectedService(null); // Clear previous selection

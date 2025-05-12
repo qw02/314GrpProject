@@ -25,9 +25,9 @@ export class ReadShortlistController {
 
     try {
       const exists = await this.shortlistEntity.getShortlistEntry(homeOwnerUsername, serviceId);
-      res.status(200).json({ exists: exists });
+      res.status(200).json(exists);
     } catch (error) {
-      res.status(500).json({ message: 'Internal server error.' });
+      res.status(500).json(false);
     }
   }
 }

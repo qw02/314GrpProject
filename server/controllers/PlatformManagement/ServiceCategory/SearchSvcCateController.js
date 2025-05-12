@@ -23,7 +23,7 @@ export class SearchSvcCateController {
       const categories = await this.serviceCategoryEntity.searchServiceCategories(searchTerm);
       res.status(200).json(categories);
     } catch (error) {
-      res.status(500).json({ message: 'Internal server error.' });
+      res.status(500).json(null);
     }
   }
 }

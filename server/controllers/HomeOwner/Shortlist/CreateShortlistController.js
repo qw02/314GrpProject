@@ -21,15 +21,14 @@ export class CreateShortlistController {
     const { serviceId, homeownerUsername } = req.body;
 
     try {
-      const result = await this.shortlistEntity.createShortlist(serviceId, homeownerUsername);
-      if (result) {
-        res.status(201).json({ message: 'Shortlist created successfully.' });
+      const success = await this.shortlistEntity.createShortlist(serviceId, homeownerUsername);
+      if (success) {
+        res.status(200).json(true);
       } else {
-        res.status(400).json({ message: 'Failed to create shortlist.' });
+        res.status(500).json(false);
       }
     } catch (error) {
-      console.error('Error creating shortlist:', error);
-      res.status(500).json({ message: 'Internal Server Error' });
+      res.status(500).json(false);
     }
   }
 }

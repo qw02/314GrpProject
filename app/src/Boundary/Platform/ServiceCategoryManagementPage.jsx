@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-// --- Helper Function for API Calls (assuming it's available, e.g., from a shared util) ---
+// --- Helper Function for API Calls ---
 async function apiCall(url, method = 'GET', body = null) {
   const apiUrl = url.startsWith('/api') ? url : `/api${url.startsWith('/') ? '' : '/'}${url}`;
   const options = { method, headers: {} };
@@ -9,32 +9,13 @@ async function apiCall(url, method = 'GET', body = null) {
     options.headers['Content-Type'] = 'application/json';
     options.body = JSON.stringify(body);
   }
-  try {
-    const response = await fetch(apiUrl, options);
-    const contentType = response.headers.get("content-type");
-    let data;
-    // Handle 204 No Content specifically
-    if (response.status === 204) {
-      return { message: `Operation successful (Status: ${response.status})` };
-    }
-    if (contentType && contentType.indexOf("application/json") !== -1) {
-      data = await response.json();
-    } else {
-      const textResponse = await response.text();
-      if (!response.ok) {
-        throw new Error(textResponse || `HTTP error! status: ${response.status}`);
-      }
-      // For non-JSON success, wrap text response in a message object
-      return { message: textResponse || `Operation successful (Status: ${response.status})` };
-    }
-    if (!response.ok) {
-      throw new Error(data.message || `HTTP error! status: ${response.status}`);
-    }
-    return data;
-  } catch (error) {
-    console.error(`API call failed: ${method} ${apiUrl}`, error);
-    throw error;
+
+  const response = await fetch(apiUrl, options);
+  if (!response.ok) {
+    throw new Error();
   }
+
+  return await response.json();
 }
 
 function ServiceCategoryManagementPage() {
@@ -80,11 +61,11 @@ function ServiceCategoryManagementPage() {
         name: createName,
         description: createDescription,
       });
-      showMessage(result.message || 'Service category created successfully!', 'success');
+      showMessage('Service category created successfully!', 'success');
       setCreateName('');
       setCreateDescription('');
     } catch (error) {
-      showMessage(error.message || 'Failed to create service category.', 'error');
+      showMessage('Failed to create service category.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -108,7 +89,7 @@ function ServiceCategoryManagementPage() {
         showMessage('No service categories found matching criteria.', 'info');
       }
     } catch (error) {
-      showMessage(error.message || 'Failed to search service categories.', 'error');
+      showMessage('Failed to search service categories.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -124,7 +105,7 @@ function ServiceCategoryManagementPage() {
       setSelectedCategory(categoryData); // Stores { id, name, description }
       setActiveTab('details');
     } catch (error) {
-      showMessage(error.message || `Failed to fetch details for category ID ${categoryId}.`, 'error');
+      showMessage(`Failed to fetch details for category.`, 'error');
       setActiveTab('search'); // Fallback to search tab on error
     } finally {
       setIsFetchingDetails(false);
@@ -149,10 +130,10 @@ function ServiceCategoryManagementPage() {
         'PUT',
         { name: updateName, description: updateDescription }
       );
-      showMessage(result.message || 'Service category updated successfully!', 'success');
+      showMessage('Service category updated successfully!', 'success');
       setSelectedCategory(prev => ({ ...prev, name: updateName, description: updateDescription }));
     } catch (error) {
-      showMessage(error.message || 'Failed to update service category.', 'error');
+      showMessage('Failed to update service category.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -166,11 +147,11 @@ function ServiceCategoryManagementPage() {
     clearMessages();
     try {
       const result = await apiCall(`/api/platform/serviceCategory/${selectedCategory.id}`, 'DELETE');
-      showMessage(result.message || 'Service category deactivated successfully!', 'success');
+      showMessage('Service category deactivated successfully!', 'success');
       setSelectedCategory(null);
       setActiveTab('search'); // Go back to search or welcome
     } catch (error) {
-      showMessage(error.message || 'Failed to deactivate service category.', 'error');
+      showMessage('Failed to deactivate service category.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -185,7 +166,6 @@ function ServiceCategoryManagementPage() {
       setCreateDescription('');
     } else if (tabName === 'search') {
       setSearchTerm('');
-      // setSearchResults([]); // Keep results if just switching back? Or clear? Let's clear.
       setSearchResults([]);
     }
     setActiveTab(tabName);
@@ -372,7 +352,7 @@ function ServiceCategoryManagementPage() {
               </button>
             </div>
           ) : (
-            <p>Select a category from the Search tab to view its details here. (o˘◡˘o)</p>
+            <p>Select a category from the Search tab to view its details here.</p>
           )}
         </div>
       )}

@@ -26,10 +26,10 @@ export class ReadServiceCategoryController {
       if (category) {
         res.status(200).json(category);
       } else {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json(null);
       }
     } catch (error) {
-      res.status(500).json({ message: 'Internal server error.' });
+      res.status(500).json(null);
     }
   }
 }

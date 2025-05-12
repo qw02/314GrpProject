@@ -40,9 +40,6 @@ function App() {
     if (userData && userData.username && userData.role) {
       localStorage.setItem('loggedInUser', JSON.stringify(userData));
       setLoggedInUser(userData);
-      console.log(`User ${userData.username} (${userData.role}) logged in.`);
-    } else {
-      console.error("Invalid user data received on login success:", userData);
     }
   };
 

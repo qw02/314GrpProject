@@ -27,7 +27,7 @@ export class ReadMonthlyReportController {
       );
       res.status(200).json(dto);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.status(500).json(null);
     }
   };
 }

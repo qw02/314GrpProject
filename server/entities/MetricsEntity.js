@@ -106,8 +106,6 @@ export class MetricsEntity {
         numberOfBookingsInPeriod
       );
     } catch (error) {
-      console.error("Error during daily stats generation:", error.message);
-      if (error.message.startsWith("Invalid date format")) throw error;
       throw new Error('Error generating daily statistics.');
     } finally {
       if (connection) connection.release();
@@ -125,13 +123,6 @@ export class MetricsEntity {
     let connection;
     try {
       const monday = new Date(mondayDateString);
-      if (isNaN(monday.getTime()) || !/^\d{4}-\d{2}-\d{2}$/.test(mondayDateString)) {
-        throw new Error("Invalid date format for weekly stats. Please use YYYY-MM-DD.");
-      }
-      const dayOfWeek = new Date(monday.toISOString().slice(0, 10)).getUTCDay();
-      if (dayOfWeek !== 1) {
-        throw new Error("Invalid date for weekly stats: The provided date must be a Monday.");
-      }
 
       const startDate = new Date(monday); // Clone
       const endDate = new Date(startDate);
@@ -156,8 +147,6 @@ export class MetricsEntity {
         numberOfBookingsInPeriod
       );
     } catch (error) {
-      console.error("Error during weekly stats generation:", error.message);
-      if (error.message.startsWith("Invalid date")) throw error;
       throw new Error('Error generating weekly statistics.');
     } finally {
       if (connection) connection.release();
@@ -199,8 +188,6 @@ export class MetricsEntity {
         numberOfBookingsInPeriod
       );
     } catch (error) {
-      console.error("Error during monthly stats generation:", error.message);
-      if (error.message.startsWith("Invalid year or month")) throw error;
       throw new Error('Error generating monthly statistics.');
     } finally {
       if (connection) connection.release();

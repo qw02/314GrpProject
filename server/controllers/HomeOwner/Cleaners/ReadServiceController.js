@@ -25,10 +25,10 @@ export class ReadServiceController {
       if (service) {
         res.status(200).json(service);
       } else {
-        res.status(404).json({ message: `Service with id:${serviceId} not found.` });
+        res.status(500).json(null);
       }
     } catch (error) {
-      res.status(500).json({ message: 'An error occurred while retrieving the service.' });
+      res.status(500).json(null);
     }
   }
 }

@@ -21,16 +21,15 @@ export class DeleteServiceCategoryController {
   deleteCategory = async (req, res) => {
     const categoryId = req.params.id;
 
-
     try {
       const success = await this.serviceCategoryEntity.deleteServiceCategory(categoryId);
       if (success) {
-        res.status(200).json({ message: `Service category deactivated successfully.` });
+        res.status(200).json(true);
       } else {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json(false);
       }
     } catch (error) {
-      res.status(500).json({ message: 'Internal server error.' });
+      res.status(500).json(false);
     }
   }
 }

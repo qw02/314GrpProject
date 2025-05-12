@@ -46,7 +46,6 @@ export class BookingEntity {
       }
       return null;
     } catch (error) {
-      console.error("Database error during booking detail retrieval:", error);
       throw new Error('Database error during booking detail retrieval.');
     } finally {
       if (connection) connection.release();
@@ -102,7 +101,6 @@ export class BookingEntity {
       const [rows] = await connection.query(sql, params);
       return rows.map(row => row.bookingID);
     } catch (error) {
-      console.error("Database error during booking history search:", error);
       throw new Error('Database error during booking history search.');
     } finally {
       if (connection) connection.release();

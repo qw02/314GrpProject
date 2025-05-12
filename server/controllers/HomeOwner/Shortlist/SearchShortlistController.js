@@ -35,7 +35,7 @@ export class SearchShortlistController {
       const serviceIds = await this.shortlistEntity.searchShortlistedServices(searchParams);
       res.status(200).json(serviceIds);
     } catch (error) {
-      res.status(500).json({ message: 'Internal server error.' });
+      res.status(500).json(null);
     }
   }
 }

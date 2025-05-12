@@ -1,50 +1,21 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-// --- Reusable API Call Helper ---
-// This function is assumed to be similar to the one provided in your example.
-async function apiCall(url, method = "GET", body = null) {
-  const apiUrl = url.startsWith("/api")
-    ? url
-    : `/api${url.startsWith("/") ? "" : "/"}${url}`;
+// --- Helper Function for API Calls ---
+async function apiCall(url, method = 'GET', body = null) {
+  const apiUrl = url.startsWith('/api') ? url : `/api${url.startsWith('/') ? '' : '/'}${url}`;
   const options = { method, headers: {} };
-  // Add authorization header if needed (e.g., from localStorage)
-  // const token = localStorage.getItem('authToken');
-  // if (token) { options.headers['Authorization'] = `Bearer ${token}`; }
   if (body) {
-    options.headers["Content-Type"] = "application/json";
+    options.headers['Content-Type'] = 'application/json';
     options.body = JSON.stringify(body);
   }
-  try {
-    const response = await fetch(apiUrl, options);
-    const contentType = response.headers.get("content-type");
-    let data;
-    if (response.status === 204) {
-      // Handle 204 No Content
-      return { message: `Operation successful (Status: ${response.status})` };
-    }
-    if (contentType && contentType.indexOf("application/json") !== -1) {
-      data = await response.json();
-    } else {
-      const textResponse = await response.text();
-      if (!response.ok) {
-        throw new Error(
-          textResponse || `HTTP error! status: ${response.status}`
-        );
-      }
-      return {
-        message:
-          textResponse || `Operation successful (Status: ${response.status})`,
-      };
-    }
-    if (!response.ok) {
-      throw new Error(data.message || `HTTP error! status: ${response.status}`);
-    }
-    return data;
-  } catch (error) {
-    console.error(`API call failed: ${method} ${apiUrl}`, error);
-    throw error; // Re-throw to be caught by calling function
+
+  const response = await fetch(apiUrl, options);
+  if (!response.ok) {
+    throw new Error();
   }
+
+  return await response.json();
 }
 
 /**
@@ -103,7 +74,7 @@ function HomeOwnerServicePage() {
         }
       } catch (e) {
         console.error("Error parsing user data from localStorage", e);
-        localStorage.removeItem("loggedInUser"); // Clear corrupted data
+        localStorage.removeItem("loggedInUser");
         showMessage(
           "Error reading user session. Please log in again.",
           "error"
@@ -115,12 +86,11 @@ function HomeOwnerServicePage() {
         "No user session found. Please log in to manage shortlists.",
         "info"
       );
-      // navigate('/login', { replace: true }); // Optional: redirect if login is strictly required for any view
+      navigate('/login', { replace: true });
     }
   }, [navigate, showMessage]);
 
   // --- API Call Functions & Related Logic ---
-
   // Function to check shortlist status
   const checkIfShortlisted = useCallback(
     async (serviceId) => {
@@ -128,15 +98,11 @@ function HomeOwnerServicePage() {
       setIsCheckingShortlistStatus(true);
       clearMessages();
       try {
-        const response = await apiCall(
+        return await apiCall(
           `/api/homeowner/shortlist/entry/${loggedInUsername}/${serviceId}`
         );
-        return response.exists || false;
       } catch (error) {
-        console.error(
-          `Error checking shortlist status for service ${serviceId}:`,
-          error
-        );
+        console.error(`Error checking shortlist status.`);
         return false;
       } finally {
         setIsCheckingShortlistStatus(false);
@@ -178,7 +144,7 @@ function HomeOwnerServicePage() {
       activeTab === "details" &&
       !loggedInUsername
     ) {
-      setIsShortlisted(false); // Can't be shortlisted if not logged in
+      setIsShortlisted(false);
     }
   }, [
     selectedService,
@@ -216,7 +182,7 @@ function HomeOwnerServicePage() {
         showMessage("No services found matching your criteria.", "info");
       }
     } catch (error) {
-      showMessage(error.message || "Failed to search for services.");
+      showMessage("Failed to search for services.");
     } finally {
       setIsLoading(false);
     }
@@ -240,10 +206,8 @@ function HomeOwnerServicePage() {
       setSelectedService(serviceDetails);
       setActiveTab("details"); // Switch to details tab
     } catch (error) {
-      showMessage(
-        error.message || `Failed to fetch details for service ID ${serviceId}.`
-      );
-      // Potentially switch back to search or stay, depending on UX preference
+      showMessage(`Failed to fetch details for service.`);
+
     } finally {
       setIsFetchingDetails(false);
     }
@@ -266,13 +230,10 @@ function HomeOwnerServicePage() {
         serviceId: selectedService.serviceId,
         homeownerUsername: loggedInUsername,
       });
-      showMessage(
-        result.message || "Service saved to shortlist successfully!",
-        "success"
-      );
+      showMessage("Service saved to shortlist successfully!", "success");
       setIsShortlisted(true); // Update UI to reflect it's now shortlisted
     } catch (error) {
-      showMessage(error.message || "Failed to save service to shortlist.");
+      showMessage("Failed to save service to shortlist.");
     } finally {
       setIsSavingToShortlist(false);
     }
@@ -331,8 +292,8 @@ function HomeOwnerServicePage() {
               message.type === "success"
                 ? "green"
                 : message.type === "info"
-                ? "darkorange"
-                : "red",
+                  ? "darkorange"
+                  : "red",
           }}
         >
           {message.text}
@@ -421,12 +382,12 @@ function HomeOwnerServicePage() {
                       `Category ID: ${service.categoryId}`}
                   </strong>{" "}
                   by {service.cleanerUsername}
-                  <br />
+                  <br/>
                   <em>
                     {service.description.substring(0, 100)}
                     {service.description.length > 100 ? "..." : ""}
                   </em>
-                  <br />
+                  <br/>
                   Price: €
                   {typeof service.pricePerHour === "number"
                     ? service.pricePerHour.toFixed(2)
@@ -480,7 +441,7 @@ function HomeOwnerServicePage() {
                   ? selectedService.pricePerHour.toFixed(2)
                   : "N/A"}
               </p>
-              <hr />
+              <hr/>
               {loggedInUsername ? (
                 isCheckingShortlistStatus ? (
                   <p>Checking shortlist status...</p>
@@ -492,8 +453,8 @@ function HomeOwnerServicePage() {
                     {isShortlisted
                       ? "✓ Already in Shortlist"
                       : isSavingToShortlist
-                      ? "Saving..."
-                      : "Save to Shortlist ♡"}
+                        ? "Saving..."
+                        : "Save to Shortlist ♡"}
                   </button>
                 )
               ) : (

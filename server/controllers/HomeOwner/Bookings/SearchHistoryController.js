@@ -35,7 +35,7 @@ export class SearchHistoryController {
       const bookingHistoriesIds = await this.bookingEntity.searchBookingHistory(searchParams);
       res.status(200).json(bookingHistoriesIds);
     } catch (error) {
-      res.status(500).json({ message: 'Internal server error.' });
+      res.status(500).json(null);
     }
   }
 }

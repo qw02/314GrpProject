@@ -27,10 +27,10 @@ export class ReadHistoryController {
       if (bookingDetails) {
         res.status(200).json(bookingDetails);
       } else {
-        res.status(404).json({ message: 'Booking not found.' });
+        res.status(500).json(null);
       }
     } catch (error) {
-      res.status(500).json({ message: 'Internal server error.' });
+      res.status(500).json(null);
     }
   }
 }

@@ -25,12 +25,12 @@ export class UpdateServiceCategoryController {
     try {
       const success = await this.serviceCategoryEntity.updateServiceCategory(categoryId, name, description);
       if (success) {
-        res.status(200).json({ message: `Service category updated successfully.` });
+        res.status(200).json(true);
       } else {
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json(false);
       }
     } catch (error) {
-      res.status(500).json({ message: 'Internal server error.' });
+      res.status(500).json(false);
     }
   }
 }

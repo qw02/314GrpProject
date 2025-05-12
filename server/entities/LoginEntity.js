@@ -19,7 +19,6 @@ export class LoginEntity {
    */
   async verifyCredentials(userModel) {
     const { username, password, role } = userModel;
-    console.log('Verifying credentials for:', username, password, 'with role:', role);
     const sql = 'SELECT username, role, isActive FROM UserAccount WHERE username = ? AND password = ? AND role = ? AND isActive = TRUE';
     try {
       const [rows] = await this.dbPool.query(sql, [username, password, role]);
