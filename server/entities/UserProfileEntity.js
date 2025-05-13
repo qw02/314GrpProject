@@ -105,18 +105,17 @@ export class UserProfileEntity {
    */
   async searchProfiles(searchTerm, roleFilter) {
     let sql = `
-            SELECT username
-            FROM UserProfile
-            WHERE (username LIKE ? OR firstName LIKE ? OR lastName LIKE ? OR email LIKE ?)
-        `;
+        SELECT p.username
+        FROM UserProfile p
+                 JOIN UserAccount a ON p.username = a.username
+        WHERE (p.username LIKE ? OR p.firstName LIKE ? OR p.lastName LIKE ? OR p.email LIKE ?)
+    `;
     const params = [`%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`];
-
     if (roleFilter) {
-      sql += ' AND role = ?';
+      sql += ' AND a.role = ?';
       params.push(roleFilter);
     }
-    sql += ' ORDER BY username ASC';
-
+    sql += ' ORDER BY p.username ASC';
     try {
       const [rows] = await this.dbPool.query(sql, params);
       return rows.map(profileData => profileData.username);

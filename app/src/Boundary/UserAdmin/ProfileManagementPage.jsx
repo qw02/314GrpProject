@@ -10,6 +10,7 @@ async function apiCall(url, method = 'GET', body = null) {
     options.body = JSON.stringify(body);
   }
 
+  console.log(`Making ${method} request to: ${apiUrl}`);
   const response = await fetch(apiUrl, options);
   if (!response.ok) {
     throw new Error();

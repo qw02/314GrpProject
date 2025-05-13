@@ -25,7 +25,7 @@ export class SearchUserProfileController {
       const usernames = await this.userProfileEntity.searchProfiles(searchTerm, roleFilter);
       res.status(200).json(usernames);
     } catch (error) {
-      res.status(500).json(null);
+      res.status(500).json("Error occurred while searching for user profiles.");
     }
   }
 }
