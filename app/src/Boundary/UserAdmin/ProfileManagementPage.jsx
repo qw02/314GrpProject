@@ -130,6 +130,7 @@ function ProfileManagementPage() {
       const profileData = await apiCall(`/api/useradmin/profile/${username}/`, 'GET');
       setSelectedProfile(profileData);
       setActiveTab('details');
+    } catch (error) {
       showMessage(`Failed to fetch profile details.`, 'error');
       setActiveTab('search');
     } finally {
