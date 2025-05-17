@@ -206,11 +206,11 @@ function PlatformReportsPage() {
           </tr>
           <tr style={{ borderBottom: '1px solid #eee' }}>
             <td style={{ padding: '8px', fontWeight: 'bold' }}>Average Service Price:</td>
-            <td style={{ padding: '8px' }}>{formatPrice(data.averageServicePrice)}</td>
+            <td style={{ padding: '8px' }}>{Math.round(data.averageServicePrice * 100) / 100}</td>
           </tr>
           <tr style={{ borderBottom: '1px solid #eee' }}>
             <td style={{ padding: '8px', fontWeight: 'bold' }}>Percentage of Services Shortlisted:</td>
-            <td style={{ padding: '8px' }}>{formatPercentage(data.percentageServicesShortlisted)}</td>
+            <td style={{ padding: '8px' }}>{data.percentageServicesShortlisted} %</td>
           </tr>
           <tr>
             <td style={{ padding: '8px', fontWeight: 'bold' }}>Number of Bookings in Period:</td>
